@@ -24,3 +24,5 @@
 /FreeRTOS_Application/src/FreeRTOS/FreeRTOS-Plus/Source/FreeRTOS-Plus-IO
 /lpc_chip_175x_6x/Debug
 /lpc_board_nxp_lpcxpresso_1769/Debug
+/lpc_chip_177x_8x/Debug
+/lpc_board_ea_devkit_1788/Debug
