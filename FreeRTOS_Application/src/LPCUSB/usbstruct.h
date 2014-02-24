@@ -34,7 +34,7 @@
 #define _USBSTRUCT_H_
 
 // CodeRed - include the LPCUSB type.h file rather than NXP one directly
-#include "type.h"
+#include "lpc_types.h"
 
 /** setup packet definitions */
 typedef struct {

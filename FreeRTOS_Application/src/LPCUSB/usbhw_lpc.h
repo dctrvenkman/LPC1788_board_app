@@ -34,7 +34,7 @@
 
 // CodeRed - pull in defines from NXP header file
 //#include "NXP\LPC17xx\LPC17xx.h"
-#include "LPC17xx.h"
+#include "chip.h"
 
 
 // CodeRed - these registers have been renamed on LPC176x

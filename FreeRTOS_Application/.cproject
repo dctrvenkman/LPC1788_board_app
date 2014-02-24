@@ -31,6 +31,7 @@
 									<listOptionValue builtIn="false" value="ALIGN_STRUCT_END=__attribute\(\(aligned\(4\)\)\)"/>
 									<listOptionValue builtIn="false" value="__CODE_RED"/>
 									<listOptionValue builtIn="false" value="__REDLIB__"/>
+									<listOptionValue builtIn="false" value="CORE_M3"/>
 								</option>
 								<option id="gnu.c.compiler.option.misc.other.644577272" name="Other flags" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0 -fno-builtin -ffunction-sections -Wextra" valueType="string"/>
 								<option id="gnu.c.compiler.option.preprocessor.nostdinc.242908842" name="Do not search system directories (-nostdinc)" superClass="gnu.c.compiler.option.preprocessor.nostdinc"/>
@@ -50,6 +51,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/RTOSDemo_RDB1768/src/FreeRTOS/FreeRTOS-Plus/Source/FreeRTOS-Plus-FAT-SL/psp/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/RTOSDemo_RDB1768/src/FreeRTOS/FreeRTOS-Plus/Source/FreeRTOS-Plus-FAT-SL/psp/target/fat_sl}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/RTOSDemo_RDB1768/src/FreeRTOS/FreeRTOS-Plus/Source/FreeRTOS-Plus-FAT-SL/version}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/lpc_chip_175x_6x/inc}&quot;"/>
 								</option>
 								<option id="com.crt.advproject.gcc.exe.debug.option.optimization.level.352418875" name="Optimization Level" superClass="com.crt.advproject.gcc.exe.debug.option.optimization.level"/>
 								<option id="gnu.c.compiler.option.optimization.flags.1797615292" name="Other optimization flags" superClass="gnu.c.compiler.option.optimization.flags"/>
@@ -150,6 +152,7 @@
 									<listOptionValue builtIn="false" value="NDEBUG"/>
 									<listOptionValue builtIn="false" value="__CODE_RED"/>
 									<listOptionValue builtIn="false" value="__REDLIB__"/>
+									<listOptionValue builtIn="false" value="CORE_M3"/>
 								</option>
 								<option id="gnu.c.compiler.option.misc.other.1084357971" name="Other flags" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0 -fno-builtin -ffunction-sections" valueType="string"/>
 								<option id="gnu.c.compiler.option.include.paths.352947793" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">

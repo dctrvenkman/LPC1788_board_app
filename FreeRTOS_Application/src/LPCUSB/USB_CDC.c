@@ -56,7 +56,7 @@
 #include "usbdebug.h"
 #include "usbstruct.h"
 
-#include "LPC17xx.h"
+#include "chip.h"
 
 #define usbMAX_SEND_BLOCK		( 20 / portTICK_RATE_MS )
 #define usbBUFFER_LEN			( 20 )
