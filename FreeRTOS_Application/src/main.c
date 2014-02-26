@@ -1,5 +1,5 @@
 /*
-    FreeRTOS V8.0.0:rc2 - Copyright (C) 2014 Real Time Engineers Ltd.
+    FreeRTOS V8.0.0 - Copyright (C) 2014 Real Time Engineers Ltd.
     All rights reserved
 
     VISIT http://www.FreeRTOS.org TO ENSURE YOU ARE USING THE LATEST VERSION.
@@ -65,19 +65,6 @@
 
 
 /*
- * Creates all the demo application tasks, then starts the scheduler.  The WEB
- * documentation provides more details of the standard demo application tasks
- * (which just exist to test the kernel port and provide an example of how to use
- * each FreeRTOS API function).
- *
- * In addition to the standard demo tasks, the following tasks and tests are
- * defined and/or created within this file:
- *
- * "Check" hook -  This only executes fully every five seconds from the tick
- * hook.  Its main function is to check that all the standard demo tasks are
- * still operational.  The status can be viewed using on the Task Stats page
- * served by the WEB server.
- *
  * "USB" task - Enumerates the USB device as a CDC class, then echoes back all
  * received characters with a configurable offset (for example, if the offset
  * is 1 and 'A' is received then 'B' will be sent back).  A dumb terminal such
@@ -95,29 +82,6 @@
 #include "lcd_driver.h"
 #include "lcd.h"
 
-/*-----------------------------------------------------------*/
-
-/* The time between cycles of the 'check' functionality (defined within the
-tick hook. */
-#define mainCHECK_DELAY						( ( portTickType ) 5000 / portTICK_RATE_MS )
-
-/* Task priorities. */
-#define mainQUEUE_POLL_PRIORITY				( tskIDLE_PRIORITY + 2 )
-#define mainSEM_TEST_PRIORITY				( tskIDLE_PRIORITY + 1 )
-#define mainBLOCK_Q_PRIORITY				( tskIDLE_PRIORITY + 2 )
-#define mainUIP_TASK_PRIORITY				( tskIDLE_PRIORITY + 3 )
-#define mainINTEGER_TASK_PRIORITY           ( tskIDLE_PRIORITY )
-#define mainGEN_QUEUE_TASK_PRIORITY			( tskIDLE_PRIORITY )
-#define mainFLASH_TASK_PRIORITY				( tskIDLE_PRIORITY + 2 )
-
-/* The WEB server has a larger stack as it utilises stack hungry string
-handling library calls. */
-#define mainBASIC_WEB_STACK_SIZE            ( configMINIMAL_STACK_SIZE * 4 )
-
-/* The message displayed by the WEB server when all tasks are executing
-without an error being reported. */
-#define mainPASS_STATUS_MESSAGE				"All tasks are executing without error."
-
 /* Bit definitions. */
 #define PCONP_PCGPIO    0x00008000
 #define PLLFEED_FEED1   0x000000AA
@@ -127,72 +91,40 @@ without an error being reported. */
 /*
  * Configure the hardware for the demo.
  */
-static void prvSetupHardware( void );
+static void prvSetupHardware(void);
 
 /*
  * The task that handles the USB stack.
  */
-extern void vUSBTask( void *pvParameters );
-
-/*
- * Simply returns the current status message for display on served WEB pages.
- */
-char *pcGetTaskStatusMessage( void );
+extern void vUSBTask(void *pvParameters);
 
 /*-----------------------------------------------------------*/
 
-/* Holds the status message displayed by the WEB server. */
-static char *pcStatusMessage = mainPASS_STATUS_MESSAGE;
-
-/*-----------------------------------------------------------*/
-
-int main( void )
+int main(void)
 {
 	/* Configure the hardware for use by this demo. */
 	prvSetupHardware();
 
     /* Create the USB task. */
-    xTaskCreate( vUSBTask, "USB", configMINIMAL_STACK_SIZE, ( void * ) NULL, tskIDLE_PRIORITY, NULL );
+    xTaskCreate(vUSBTask, "USB", configMINIMAL_STACK_SIZE, (void *) NULL, tskIDLE_PRIORITY, NULL);
 
-	/* Display the IP address, then create the uIP task.  The WEB server runs
-	in this task. */
 	LCDdriver_initialisation();
-	LCD_PrintString( 5, 10, "FreeRTOS.org", 14, COLOR_GREEN);
+	LCD_PrintString(5, 10, "FreeRTOS.org", 14, COLOR_GREEN);
 
     /* Start the scheduler. */
 	vTaskStartScheduler();
 
     /* Will only get here if there was insufficient memory to create the idle
     task.  The idle task is created within vTaskStartScheduler(). */
-	for( ;; );
+	while(1)
+		;
 }
-/*-----------------------------------------------------------*/
 
 void vApplicationTickHook( void )
 {
-static unsigned long ulTicksSinceLastDisplay = 0;
-
 	/* Called from every tick interrupt as described in the comments at the top
-	of this file.
-
-	Have enough ticks passed to make it	time to perform our health status
-	check again? */
-	ulTicksSinceLastDisplay++;
-	if( ulTicksSinceLastDisplay >= mainCHECK_DELAY )
-	{
-		/* Reset the counter so these checks run again in mainCHECK_DELAY
-		ticks time. */
-		ulTicksSinceLastDisplay = 0;
-	}
+	of this file. */
 }
-/*-----------------------------------------------------------*/
-
-char *pcGetTaskStatusMessage( void )
-{
-	/* Not bothered about a critical section here. */
-	return pcStatusMessage;
-}
-/*-----------------------------------------------------------*/
 
 void prvSetupHardware( void )
 {
@@ -205,7 +137,7 @@ void prvSetupHardware( void )
 	/* Disable TPIU. */
 	LPC_IOCON->PINSEL[10] = 0;
 
-	if ( LPC_SYSCTL->PLL[0].PLLSTAT & ( 1 << 25 ) )
+	if(LPC_SYSCTL->PLL[0].PLLSTAT & (1 << 25))
 	{
 		/* Enable PLL, disconnected. */
 		LPC_SYSCTL->PLL[0].PLLCON = 1;
@@ -220,7 +152,8 @@ void prvSetupHardware( void )
 
 	/* Enable main OSC. */
 	LPC_SYSCTL->SCS |= 0x20;
-	while( !( LPC_SYSCTL->SCS & 0x40 ) );
+	while(!(LPC_SYSCTL->SCS & 0x40))
+		;
 
 	/* select main OSC, 12MHz, as the PLL clock source. */
 	LPC_SYSCTL->CLKSRCSEL = 0x1;
@@ -241,20 +174,19 @@ void prvSetupHardware( void )
 	LPC_SYSCTL->FLASHCFG = 0x403a;
 
 	/* Check lock bit status. */
-	while( ( ( LPC_SYSCTL->PLL[0].PLLSTAT & ( 1 << 26 ) ) == 0 ) );
+	while(((LPC_SYSCTL->PLL[0].PLLSTAT & (1 << 26)) == 0))
+		;
 
 	/* Enable and connect. */
 	LPC_SYSCTL->PLL[0].PLLCON = 3;
 	LPC_SYSCTL->PLL[0].PLLFEED = PLLFEED_FEED1;
 	LPC_SYSCTL->PLL[0].PLLFEED = PLLFEED_FEED2;
-	while( ( ( LPC_SYSCTL->PLL[0].PLLSTAT & ( 1 << 25 ) ) == 0 ) );
-
-
-
+	while(((LPC_SYSCTL->PLL[0].PLLSTAT & (1 << 25)) == 0))
+		;
 
 	/* Configure the clock for the USB. */
 
-	if( LPC_SYSCTL->PLL[1].PLLSTAT & ( 1 << 9 ) )
+	if(LPC_SYSCTL->PLL[1].PLLSTAT & (1 << 9))
 	{
 		/* Enable PLL, disconnected. */
 		LPC_SYSCTL->PLL[1].PLLCON = 1;
@@ -275,33 +207,31 @@ void prvSetupHardware( void )
 	LPC_SYSCTL->PLL[1].PLLCON = 1;
 	LPC_SYSCTL->PLL[1].PLLFEED = PLLFEED_FEED1;
 	LPC_SYSCTL->PLL[1].PLLFEED = PLLFEED_FEED2;
-	while( ( ( LPC_SYSCTL->PLL[1].PLLSTAT & ( 1 << 10 ) ) == 0 ) );
+	while(((LPC_SYSCTL->PLL[1].PLLSTAT & (1 << 10)) == 0))
+		;
 
 	/* Enable and connect. */
 	LPC_SYSCTL->PLL[1].PLLCON = 3;
 	LPC_SYSCTL->PLL[1].PLLFEED = PLLFEED_FEED1;
 	LPC_SYSCTL->PLL[1].PLLFEED = PLLFEED_FEED2;
-	while( ( ( LPC_SYSCTL->PLL[1].PLLSTAT & ( 1 << 9 ) ) == 0 ) );
+	while(((LPC_SYSCTL->PLL[1].PLLSTAT & (1 << 9)) == 0))
+		;
 
 	/*  Setup the peripheral bus to be the same as the PLL output (64 MHz). */
 	LPC_SYSCTL->PCLKSEL[0] = 0x05555555;
 }
-/*-----------------------------------------------------------*/
 
 void vApplicationStackOverflowHook( xTaskHandle pxTask, char *pcTaskName )
 {
 	/* This function will get called if a task overflows its stack. */
-
-	( void ) pxTask;
-	( void ) pcTaskName;
-
+	(void)pxTask;
+	(void)pcTaskName;
 	for( ;; );
 }
-/*-----------------------------------------------------------*/
 
 void vConfigureTimerForRunTimeStats( void )
 {
-const unsigned long TCR_COUNT_RESET = 2, CTCR_CTM_TIMER = 0x00, TCR_COUNT_ENABLE = 0x01;
+	const unsigned long TCR_COUNT_RESET = 2, CTCR_CTM_TIMER = 0x00, TCR_COUNT_ENABLE = 0x01;
 
 	/* This function configures a timer that is used as the time base when
 	collecting run time statistical information - basically the percentage
@@ -321,10 +251,8 @@ const unsigned long TCR_COUNT_RESET = 2, CTCR_CTM_TIMER = 0x00, TCR_COUNT_ENABLE
 
 	/* Prescale to a frequency that is good enough to get a decent resolution,
 	but not too fast so as to overflow all the time. */
-	LPC_TIMER0->PR =  ( configCPU_CLOCK_HZ / 10000UL ) - 1UL;
+	LPC_TIMER0->PR =  (configCPU_CLOCK_HZ / 10000UL) - 1UL;
 
 	/* Start the counter. */
 	LPC_TIMER0->TCR = TCR_COUNT_ENABLE;
 }
-/*-----------------------------------------------------------*/
-

@@ -61,7 +61,6 @@
 #define usbMAX_SEND_BLOCK		( 20 / portTICK_RATE_MS )
 #define usbBUFFER_LEN			( 20 )
 
-#define INCREMENT_ECHO_BY 1
 #define BAUD_RATE	115200
 
 #define INT_IN_EP		0x81
@@ -451,9 +450,8 @@ void vUSBTask( void *pvParameters )
 		c = VCOM_getchar();
 		if (c != EOF) 
 		{
-			// Echo character back with INCREMENT_ECHO_BY offset, so for example if
-			// INCREMENT_ECHO_BY is 1 and 'A' is received, 'B' will be echoed back.
-			VCOM_putchar(c + INCREMENT_ECHO_BY );
+			// Echo character back
+			VCOM_putchar(c);
 		}
 	}
 }
