@@ -106,7 +106,7 @@ int main(void)
 	prvSetupHardware();
 
     /* Create the USB task. */
-    xTaskCreate(vUSBTask, "USB", configMINIMAL_STACK_SIZE, (void *) NULL, tskIDLE_PRIORITY, NULL);
+    xTaskCreate(vUSBTask, "USB", configMINIMAL_STACK_SIZE + 0x100, (void *) NULL, tskIDLE_PRIORITY, NULL);
 
 	LCDdriver_initialisation();
 	LCD_PrintString(5, 10, "FreeRTOS.org", 14, COLOR_GREEN);

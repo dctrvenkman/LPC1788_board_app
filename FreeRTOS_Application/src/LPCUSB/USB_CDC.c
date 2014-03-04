@@ -452,6 +452,8 @@ void vUSBTask( void *pvParameters )
 		{
 			// Echo character back
 			VCOM_putchar(c);
+			printf("%c", c);
+			//putchar(c);
 		}
 	}
 }
