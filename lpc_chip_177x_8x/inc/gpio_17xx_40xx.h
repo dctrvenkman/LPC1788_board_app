@@ -99,7 +99,7 @@ STATIC INLINE void Chip_GPIO_SetPinState(LPC_GPIO_T *pGPIO, uint8_t port, uint8_
  * @brief	Set a GPIO port/bit state
  * @param	pGPIO	: The base of GPIO peripheral on the chip
  * @param	port	: GPIO port to set
- * @param	bit		: GPIO bit to set
+ * @param	pin		: GPIO pin to set
  * @param	setting	: true for high, false for low
  * @return	Nothing
  */
@@ -450,6 +450,21 @@ STATIC INLINE void Chip_GPIO_ClearValue(LPC_GPIO_T *pGPIO, uint8_t portNum, uint
 STATIC INLINE void Chip_GPIO_SetPinOutLow(LPC_GPIO_T *pGPIO, uint8_t port, uint8_t pin)
 {
 	pGPIO[port].CLR = (1 << pin);
+}
+
+/**
+ * @brief	Toggle an individual GPIO output pin to the opposite state
+ * @param	pGPIO	: The base of GPIO peripheral on the chip
+ * @param	port	: GPIO Port number where @a pin is located
+ * @param	pin		: pin number (0..n) to toggle
+ * @return	None
+ * @note	Any bit set as a '0' will not have it's state changed. This only
+ * applies to ports configured as an output.
+ */
+STATIC INLINE void Chip_GPIO_SetPinToggle(LPC_GPIO_T *pGPIO, uint8_t port, uint8_t pin)
+{
+	bool setting = !Chip_GPIO_GetPinState(pGPIO, port, pin);
+	Chip_GPIO_SetPinState(pGPIO, port, pin, setting);
 }
 
 /**

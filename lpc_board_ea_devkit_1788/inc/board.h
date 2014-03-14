@@ -284,13 +284,6 @@ uint8_t Joystick_GetStatus(void);
 void Board_RTC_EV_Init(void);
 
 /**
- * @brief	Create Serial Stream
- * @param	Stream	: Pointer to stream
- * @return	Nothing
- */
-void Serial_CreateStream(void *Stream);
-
-/**
  * @brief	Sets up board specific SDC peripheral
  * @return	Nothing
  */
@@ -427,7 +420,7 @@ STATIC INLINE uint8_t Board_NANDFLash_ReadByte(void)
 
 /**
  * @brief	Initializes USB device mode pins per board design
- * @param	port	: USB port to be enabled 
+ * @param	port	: USB port to be enabled
  * @return	Nothing
  * @note	Only one of the USB port can be enabled at a given time.
  */
@@ -439,5 +432,9 @@ void Board_USBD_Init(uint32_t port);
 #ifdef __cplusplus
 }
 #endif
+
+/**
+ * @}
+ */
 
 #endif /* __BOARD_H_ */

@@ -301,48 +301,69 @@ uint32_t Buttons_GetStatus(void)
 	return ret;
 }
 
+/* Baseboard joystick buttons */
+#define NUM_BUTTONS 5
+static const uint8_t portButton[NUM_BUTTONS] = { 
+	JOYSTICK_UP_GPIO_PORT_NUM, 
+	JOYSTICK_DOWN_GPIO_PORT_NUM, 
+	JOYSTICK_LEFT_GPIO_PORT_NUM, 
+	JOYSTICK_RIGHT_GPIO_PORT_NUM, 
+	JOYSTICK_PRESS_GPIO_PORT_NUM
+};
+static const uint8_t pinButton[NUM_BUTTONS] = {
+	JOYSTICK_UP_GPIO_BIT_NUM, 
+	JOYSTICK_DOWN_GPIO_BIT_NUM, 
+	JOYSTICK_LEFT_GPIO_BIT_NUM, 
+	JOYSTICK_RIGHT_GPIO_BIT_NUM, 
+	JOYSTICK_PRESS_GPIO_BIT_NUM
+};
+static const uint8_t stateButton[NUM_BUTTONS] = {
+	JOY_UP, 
+	JOY_DOWN, 
+	JOY_LEFT,
+	JOY_RIGHT, 
+	JOY_PRESS
+};
+
+/* Initialize Joystick */
 void Board_Joystick_Init(void)
 {
-	Chip_IOCON_PinMux(LPC_IOCON, JOYSTICK_UP_GPIO_PORT_NUM, JOYSTICK_UP_GPIO_BIT_NUM, IOCON_MODE_INACT, IOCON_FUNC0);
-	Chip_IOCON_PinMux(LPC_IOCON, JOYSTICK_DOWN_GPIO_PORT_NUM, JOYSTICK_DOWN_GPIO_BIT_NUM, IOCON_MODE_INACT, IOCON_FUNC0);
-	Chip_IOCON_PinMux(LPC_IOCON, JOYSTICK_LEFT_GPIO_PORT_NUM, JOYSTICK_LEFT_GPIO_BIT_NUM, IOCON_MODE_INACT, IOCON_FUNC0);
-	Chip_IOCON_PinMux(LPC_IOCON,
-					  JOYSTICK_RIGHT_GPIO_PORT_NUM,
-					  JOYSTICK_RIGHT_GPIO_BIT_NUM,
-					  IOCON_MODE_INACT,
-					  IOCON_FUNC0);
-	Chip_IOCON_PinMux(LPC_IOCON,
-					  JOYSTICK_PRESS_GPIO_PORT_NUM,
-					  JOYSTICK_PRESS_GPIO_BIT_NUM,
-					  IOCON_MODE_INACT,
-					  IOCON_FUNC0);
-	Chip_GPIO_WriteDirBit(LPC_GPIO, JOYSTICK_UP_GPIO_PORT_NUM, JOYSTICK_UP_GPIO_BIT_NUM, false);		/* input */
-	Chip_GPIO_WriteDirBit(LPC_GPIO, JOYSTICK_DOWN_GPIO_PORT_NUM, JOYSTICK_DOWN_GPIO_BIT_NUM, false);	/* input */
-	Chip_GPIO_WriteDirBit(LPC_GPIO, JOYSTICK_LEFT_GPIO_PORT_NUM, JOYSTICK_LEFT_GPIO_BIT_NUM, false);	/* input */
-	Chip_GPIO_WriteDirBit(LPC_GPIO, JOYSTICK_RIGHT_GPIO_PORT_NUM, JOYSTICK_RIGHT_GPIO_BIT_NUM, false);	/* input */
-	Chip_GPIO_WriteDirBit(LPC_GPIO, JOYSTICK_PRESS_GPIO_PORT_NUM, JOYSTICK_PRESS_GPIO_BIT_NUM, false);	/* input */
+	int ix;
+
+	/* IOCON states already selected in SystemInit(), GPIO setup only. Pullups
+	   are external, so IOCON with no states */
+	for (ix = 0; ix < NUM_BUTTONS; ix++) {
+		Chip_GPIO_SetPinDIRInput(LPC_GPIO, portButton[ix], pinButton[ix]);
+	}
 }
 
+/* Get Joystick status */
 uint8_t Joystick_GetStatus(void)
 {
-	uint8_t ret = NO_BUTTON_PRESSED;
-	if ((Chip_GPIO_ReadPortBit(LPC_GPIO, JOYSTICK_UP_GPIO_PORT_NUM, JOYSTICK_UP_GPIO_BIT_NUM)) == 0x00) {
-		ret |= JOY_UP;
+	uint8_t ix, ret = 0;
+
+	for (ix = 0; ix < NUM_BUTTONS; ix++) {
+		if ((Chip_GPIO_GetPinState(LPC_GPIO, portButton[ix], pinButton[ix])) == false) {
+			ret |= stateButton[ix];
+		}
 	}
-	else if (Chip_GPIO_ReadPortBit(LPC_GPIO, JOYSTICK_DOWN_GPIO_PORT_NUM, JOYSTICK_DOWN_GPIO_BIT_NUM) == 0x00) {
-		ret |= JOY_DOWN;
-	}
-	else if ((Chip_GPIO_ReadPortBit(LPC_GPIO, JOYSTICK_LEFT_GPIO_PORT_NUM, JOYSTICK_LEFT_GPIO_BIT_NUM)) == 0x00) {
-		ret |= JOY_LEFT;
-	}
-	else if (Chip_GPIO_ReadPortBit(LPC_GPIO, JOYSTICK_RIGHT_GPIO_PORT_NUM, JOYSTICK_RIGHT_GPIO_BIT_NUM) == 0x00) {
-		ret |= JOY_RIGHT;
-	}
-	else if ((Chip_GPIO_ReadPortBit(LPC_GPIO, JOYSTICK_PRESS_GPIO_PORT_NUM, JOYSTICK_PRESS_GPIO_BIT_NUM)) == 0x00) {
-		ret |= JOY_PRESS;
-	}
+
 	return ret;
 }
 
+
 void Serial_CreateStream(void *Stream)
 {}
+
+void Board_USBD_Init(uint32_t port)
+{
+	/* VBUS is not connected on the NXP LPCXpresso LPC1769, so leave the pin at default setting. */
+	/*Chip_IOCON_PinMux(LPC_IOCON, 1, 30, IOCON_MODE_INACT, IOCON_FUNC2);*/ /* USB VBUS */
+	
+	Chip_IOCON_PinMux(LPC_IOCON, 0, 29, IOCON_MODE_INACT, IOCON_FUNC1);	/* P0.29 D1+, P0.30 D1- */
+	Chip_IOCON_PinMux(LPC_IOCON, 0, 30, IOCON_MODE_INACT, IOCON_FUNC1);
+
+	LPC_USB->USBClkCtrl = 0x12;                /* Dev, AHB clock enable */
+	while ((LPC_USB->USBClkSt & 0x12) != 0x12); 
+}
+

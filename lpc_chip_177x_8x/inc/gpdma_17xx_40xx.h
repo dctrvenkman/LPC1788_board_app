@@ -178,7 +178,7 @@ typedef struct {
 /**
  * @brief GPDMA request connections
  */
-#define GPDMA_CONN_MEMORY           ((0UL))
+#define GPDMA_CONN_MEMORY           ((0UL))         /*!< Memory */
 #define GPDMA_CONN_SDC              ((1UL))			/*!< SD card */
 #define GPDMA_CONN_SSP0_Tx          ((2UL))			/*!< SSP0 Tx */
 #define GPDMA_CONN_SSP0_Rx          ((3UL))			/*!< SSP0 Rx */
@@ -302,10 +302,10 @@ void Chip_GPDMA_DeInit(LPC_GPDMA_T *pGPDMA);
  * @param	pGPDMA			: The base of GPDMA on the chip
  * @param	GPDMACfg		: Pointer to configuration structure to be initialized
  * @param	ChannelNum		: Channel used for transfer *must be obtained using Chip_GPDMA_GetFreeChannel()*
- * @param	src				: Address of Memory or one of @link #GPDMA_CONN_MEMORY
- *                              PeripheralConnection_ID @endlink, which is the source
- * @param	dst				: Address of Memory or one of @link #GPDMA_CONN_MEMORY
- *                              PeripheralConnection_ID @endlink, which is the destination
+ * @param	src				: Address of Memory or one of GPDMA_CONN_MEMORY
+ *                              PeripheralConnection_ID , which is the source
+ * @param	dst				: Address of Memory or one of GPDMA_CONN_MEMORY
+ *                              PeripheralConnection_ID, which is the destination
  * @param	Size			: The number of DMA transfers
  * @param	TransferType	: Select the transfer controller and the type of transfer. (See, #GPDMA_FLOW_CONTROL_T)
  * @return	ERROR on error, SUCCESS on success
@@ -422,10 +422,10 @@ Status Chip_GPDMA_SGTransfer(LPC_GPDMA_T *pGPDMA,
  * @brief	Prepare a single DMA descriptor
  * @param	pGPDMA			: The base of GPDMA on the chip
  * @param	DMADescriptor	: DMA Descriptor to be initialized
- * @param	src				: Address of Memory or one of @link #GPDMA_CONN_MEMORY
- *                              PeripheralConnection_ID @endlink, which is the source
- * @param	dst				: Address of Memory or one of @link #GPDMA_CONN_MEMORY
- *                              PeripheralConnection_ID @endlink, which is the destination
+ * @param	src				: Address of Memory or one of GPDMA_CONN_MEMORY
+ *                              PeripheralConnection_ID, which is the source
+ * @param	dst				: Address of Memory or one of GPDMA_CONN_MEMORY
+ *                              PeripheralConnection_ID, which is the destination
  * @param	Size			: The number of DMA transfers
  * @param	TransferType	: Select the transfer controller and the type of transfer. (See, #GPDMA_FLOW_CONTROL_T)
  * @param	NextDescriptor	: Pointer to next descriptor (0 if no more descriptors available)

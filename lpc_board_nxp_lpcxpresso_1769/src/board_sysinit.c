@@ -48,6 +48,7 @@ STATIC const PINMUX_GRP_T pinmuxing[] = {
 	{0,  22,  IOCON_MODE_INACT | IOCON_FUNC0},	/* Led 0 */
 	{0,  23,  IOCON_MODE_INACT | IOCON_FUNC1},	/* ADC 0 */
 	{0,  26,  IOCON_MODE_INACT | IOCON_FUNC2},	/* DAC */
+
 	/* ENET */
 	{0x1, 0,  IOCON_MODE_INACT | IOCON_FUNC1},	/* ENET_TXD0 */
 	{0x1, 1,  IOCON_MODE_INACT | IOCON_FUNC1},	/* ENET_TXD1 */
@@ -60,6 +61,14 @@ STATIC const PINMUX_GRP_T pinmuxing[] = {
 	{0x1, 16, IOCON_MODE_INACT | IOCON_FUNC1},	/* ENET_MDC */
 	{0x1, 17, IOCON_MODE_INACT | IOCON_FUNC1},	/* ENET_MDIO */
 	{0x1, 27, IOCON_MODE_INACT | IOCON_FUNC1},	/* CLKOUT */
+
+	/* Joystick buttons. */
+	{2, 3,  IOCON_MODE_INACT | IOCON_FUNC0},	/* JOYSTICK_UP */
+	{0, 15, IOCON_MODE_INACT | IOCON_FUNC0},	/* JOYSTICK_DOWN */
+	{2, 4,  IOCON_MODE_INACT | IOCON_FUNC0},	/* JOYSTICK_LEFT */
+	{0, 16, IOCON_MODE_INACT | IOCON_FUNC0},	/* JOYSTICK_RIGHT */
+	{0, 17, IOCON_MODE_INACT | IOCON_FUNC0},	/* JOYSTICK_PRESS */
+
 };
 
 /*****************************************************************************
@@ -85,8 +94,8 @@ void Board_SetupClocking(void)
 {
 	Chip_SetupXtalClocking();
 
-	/* Setup FLASH access to 5 clocks (120MHz clock) */
-	Chip_SYSCTL_SetFLASHAccess(FLASHTIM_120MHZ_CPU);
+	/* Setup FLASH access to 4 clocks (100MHz clock) */
+	Chip_SYSCTL_SetFLASHAccess(FLASHTIM_100MHZ_CPU);
 }
 
 /* Set up and initialize hardware prior to call to main */

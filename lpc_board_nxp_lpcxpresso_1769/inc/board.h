@@ -76,18 +76,6 @@ extern "C" {
 /* Board name */
 #define BOARD_NXP_LPCXPRESSO_1769
 
-
-
-
-
-
-
-
-
-
-
-
-
 #define USE_RMII
 
 /**
@@ -231,6 +219,14 @@ uint8_t Joystick_GetStatus(void);
  * @return	Nothing
  */
 void Serial_CreateStream(void *Stream);
+
+/**
+ * @brief	Initializes USB device mode pins per board design
+ * @param	port	: USB port to be enabled 
+ * @return	Nothing
+ * @note	Only one of the USB port can be enabled at a given time.
+ */
+void Board_USBD_Init(uint32_t port);
 
 /**
  * @}

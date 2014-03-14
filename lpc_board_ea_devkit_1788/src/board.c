@@ -101,8 +101,6 @@
 #define JOYSTICK_PRESS_GPIO_PORT_NUM            2
 #define JOYSTICK_PRESS_GPIO_BIT_NUM             22
 
-#define NUM_LEDS 2
-
 typedef struct {
 	int16_t ad_left;						/* left margin */
 	int16_t ad_right;						/* right margin */
@@ -140,9 +138,6 @@ const LCD_CONFIG_T EA320x240 = {
 	LCD_COLOR_FORMAT_BGR,		/* BGR or RGB */
 	0		/* Dual panel, 1 = dual panel display */
 };
-
-/* LEDs on port 2 */
-static const uint8_t ledBits[NUM_LEDS] = {26, 27};
 
 /*****************************************************************************
  * Public types/enumerations/variables
@@ -334,18 +329,6 @@ static int16_t calibrateTSC2046(int16_t Coord, int16_t MinVal, int16_t MaxVal, i
 	return ret;
 }
 
-/* Initializes board LED(s) */
-static void Board_LED_Init(void)
-{
-	int i;
-
-	/* Setup port direction and initial output state */
-	for (i = 0; i < NUM_LEDS; i++) {
-		Chip_GPIO_WriteDirBit(LPC_GPIO, 2, ledBits[i], true);
-		Chip_GPIO_WritePortBit(LPC_GPIO, 2, ledBits[i], true);
-	}
-}
-
 /*****************************************************************************
  * Public functions
  ****************************************************************************/
@@ -414,11 +397,28 @@ void Board_UARTPutSTR(char *str)
 #endif
 }
 
+#define MAXLEDS 2
+static const uint8_t ledports[MAXLEDS] = {2, 2};
+static const uint8_t ledpins[MAXLEDS] = {26, 27};
+
+/* Initializes board LED(s) */
+static void Board_LED_Init(void)
+{
+	int i;
+
+	/* Setup port direction and initial output state */
+	for (i = 0; i < MAXLEDS; i++) {
+		Chip_GPIO_WriteDirBit(LPC_GPIO, ledports[i], ledpins[i], true);
+		Chip_GPIO_WritePortBit(LPC_GPIO, ledports[i], ledpins[i], true);
+	}
+}
+
 /* Sets the state of a board LED to on or off */
 void Board_LED_Set(uint8_t LEDNumber, bool On)
 {
-	if (LEDNumber == 0) {
-		Chip_GPIO_WritePortBit(LPC_GPIO, 2, ledBits[LEDNumber], (bool) !On);
+	if (LEDNumber < MAXLEDS) {
+		/* Set state, low is on, high is off */
+		Chip_GPIO_SetPinState(LPC_GPIO, ledports[LEDNumber], ledpins[LEDNumber], !On);
 	}
 }
 
@@ -427,19 +427,20 @@ bool Board_LED_Test(uint8_t LEDNumber)
 {
 	bool state = false;
 
-	if (LEDNumber == 0) {
-		state = Chip_GPIO_ReadPortBit(LPC_GPIO, 2, ledBits[LEDNumber]);
-		
-		/* This LED is reverse logic. */
-		state = !state;
+	if (LEDNumber < MAXLEDS) {
+		state = Chip_GPIO_GetPinState(LPC_GPIO, ledports[LEDNumber], ledpins[LEDNumber]);
 	}
 
-	return state;
+	/* These LEDs are reverse logic. */
+	return !state;
 }
 
+/* Toggles the current state of a board LED */
 void Board_LED_Toggle(uint8_t LEDNumber)
 {
-	Board_LED_Set(LEDNumber, !Board_LED_Test(LEDNumber));
+	if (LEDNumber < MAXLEDS) {
+		Chip_GPIO_SetPinToggle(LPC_GPIO, ledports[LEDNumber], ledpins[LEDNumber]);
+	}
 }
 
 /* Returns the MAC address assigned to this board */
@@ -557,7 +558,7 @@ void Board_InitLCDController(void)
 	Chip_SSP_SetMaster(LCD_SSP_CTRL, true);
 	Chip_SSP_SetBitRate(LCD_SSP_CTRL, 1000000);
 	Chip_SSP_SetFormat(LCD_SSP_CTRL, SSP_BITS_8, SSP_FRAMEFORMAT_SPI, SSP_CLOCK_MODE0);
-	
+
 	Chip_SSP_Enable(LCD_SSP_CTRL);
 
 	delayMs(200);
@@ -714,25 +715,6 @@ uint32_t Buttons_GetStatus(void)
 	return ret;
 }
 
-void Board_Joystick_Init(void)
-{
-	Chip_IOCON_PinMuxSet(LPC_IOCON, JOYSTICK_UP_GPIO_PORT_NUM, JOYSTICK_UP_GPIO_BIT_NUM,
-						 (IOCON_FUNC0 | IOCON_MODE_INACT));
-	Chip_IOCON_PinMuxSet(LPC_IOCON, JOYSTICK_DOWN_GPIO_PORT_NUM, JOYSTICK_DOWN_GPIO_BIT_NUM,
-						 (IOCON_FUNC0 | IOCON_MODE_INACT));
-	Chip_IOCON_PinMuxSet(LPC_IOCON, JOYSTICK_LEFT_GPIO_PORT_NUM, JOYSTICK_LEFT_GPIO_BIT_NUM,
-						 (IOCON_FUNC0 | IOCON_MODE_INACT));
-	Chip_IOCON_PinMuxSet(LPC_IOCON, JOYSTICK_RIGHT_GPIO_PORT_NUM, JOYSTICK_RIGHT_GPIO_BIT_NUM,
-						 (IOCON_FUNC0 | IOCON_MODE_INACT));
-	Chip_IOCON_PinMuxSet(LPC_IOCON, JOYSTICK_PRESS_GPIO_PORT_NUM, JOYSTICK_PRESS_GPIO_BIT_NUM,
-						 (IOCON_FUNC0 | IOCON_MODE_INACT));
-	Chip_GPIO_WriteDirBit(LPC_GPIO, JOYSTICK_UP_GPIO_PORT_NUM, JOYSTICK_UP_GPIO_BIT_NUM, false);		// input
-	Chip_GPIO_WriteDirBit(LPC_GPIO, JOYSTICK_DOWN_GPIO_PORT_NUM, JOYSTICK_DOWN_GPIO_BIT_NUM, false);	// input
-	Chip_GPIO_WriteDirBit(LPC_GPIO, JOYSTICK_LEFT_GPIO_PORT_NUM, JOYSTICK_LEFT_GPIO_BIT_NUM, false);	// input
-	Chip_GPIO_WriteDirBit(LPC_GPIO, JOYSTICK_RIGHT_GPIO_PORT_NUM, JOYSTICK_RIGHT_GPIO_BIT_NUM, false);	// input
-	Chip_GPIO_WriteDirBit(LPC_GPIO, JOYSTICK_PRESS_GPIO_PORT_NUM, JOYSTICK_PRESS_GPIO_BIT_NUM, false);	// input
-}
-
 /* Sets up board specific CAN interface */
 void Board_CAN_Init(LPC_CAN_T *pCAN)
 {
@@ -746,24 +728,53 @@ void Board_CAN_Init(LPC_CAN_T *pCAN)
 	}
 }
 
+/* Baseboard joystick buttons */
+#define NUM_BUTTONS 5
+static const uint8_t portButton[NUM_BUTTONS] = { 
+	JOYSTICK_UP_GPIO_PORT_NUM, 
+	JOYSTICK_DOWN_GPIO_PORT_NUM, 
+	JOYSTICK_LEFT_GPIO_PORT_NUM, 
+	JOYSTICK_RIGHT_GPIO_PORT_NUM, 
+	JOYSTICK_PRESS_GPIO_PORT_NUM
+};
+static const uint8_t pinButton[NUM_BUTTONS] = {
+	JOYSTICK_UP_GPIO_BIT_NUM, 
+	JOYSTICK_DOWN_GPIO_BIT_NUM, 
+	JOYSTICK_LEFT_GPIO_BIT_NUM, 
+	JOYSTICK_RIGHT_GPIO_BIT_NUM, 
+	JOYSTICK_PRESS_GPIO_BIT_NUM
+};
+static const uint8_t stateButton[NUM_BUTTONS] = {
+	JOY_UP, 
+	JOY_DOWN, 
+	JOY_LEFT,
+	JOY_RIGHT, 
+	JOY_PRESS
+};
+
+/* Initialize Joystick */
+void Board_Joystick_Init(void)
+{
+	int ix;
+
+	/* IOCON states already selected in SystemInit(), GPIO setup only. Pullups
+	   are external, so IOCON with no states */
+	for (ix = 0; ix < NUM_BUTTONS; ix++) {
+		Chip_GPIO_SetPinDIRInput(LPC_GPIO, portButton[ix], pinButton[ix]);
+	}
+}
+
+/* Get Joystick status */
 uint8_t Joystick_GetStatus(void)
 {
-	uint8_t ret = NO_BUTTON_PRESSED;
-	if ((Chip_GPIO_ReadPortBit(LPC_GPIO, JOYSTICK_UP_GPIO_PORT_NUM, JOYSTICK_UP_GPIO_BIT_NUM)) == 0x00) {
-		ret |= JOY_UP;
+	uint8_t ix, ret = 0;
+
+	for (ix = 0; ix < NUM_BUTTONS; ix++) {
+		if ((Chip_GPIO_GetPinState(LPC_GPIO, portButton[ix], pinButton[ix])) == false) {
+			ret |= stateButton[ix];
+		}
 	}
-	else if (Chip_GPIO_ReadPortBit(LPC_GPIO, JOYSTICK_DOWN_GPIO_PORT_NUM, JOYSTICK_DOWN_GPIO_BIT_NUM) == 0x00) {
-		ret |= JOY_DOWN;
-	}
-	else if ((Chip_GPIO_ReadPortBit(LPC_GPIO, JOYSTICK_LEFT_GPIO_PORT_NUM, JOYSTICK_LEFT_GPIO_BIT_NUM)) == 0x00) {
-		ret |= JOY_LEFT;
-	}
-	else if (Chip_GPIO_ReadPortBit(LPC_GPIO, JOYSTICK_RIGHT_GPIO_PORT_NUM, JOYSTICK_RIGHT_GPIO_BIT_NUM) == 0x00) {
-		ret |= JOY_RIGHT;
-	}
-	else if ((Chip_GPIO_ReadPortBit(LPC_GPIO, JOYSTICK_PRESS_GPIO_PORT_NUM, JOYSTICK_PRESS_GPIO_BIT_NUM)) == 0x00) {
-		ret |= JOY_PRESS;
-	}
+
 	return ret;
 }
 
@@ -773,12 +784,6 @@ void Board_RTC_EV_Init(void)
 	Chip_IOCON_PinMuxSet(LPC_IOCON, 0, 7, (IOCON_FUNC4 | IOCON_MODE_INACT));
 	Chip_IOCON_PinMuxSet(LPC_IOCON, 0, 8, (IOCON_FUNC4 | IOCON_MODE_INACT));
 	Chip_IOCON_PinMuxSet(LPC_IOCON, 0, 9, (IOCON_FUNC4 | IOCON_MODE_INACT));
-}
-
-/* Create Serial Stream */
-void Serial_CreateStream(void *Stream)
-{
-	/* To be implemented */
 }
 
 /* Setup board for SDC interface */
@@ -808,22 +813,23 @@ void Board_NANDFLash_Init(void)
 
 void Board_USBD_Init(uint32_t port)
 {
-	Chip_IOCON_PinMux(LPC_IOCON, 1, 30, IOCON_MODE_INACT, IOCON_FUNC2); /* USB VBUS */
+	/* On the EA LPC1788 board leave VBUS at default setting... */
+	/* Chip_IOCON_PinMux(LPC_IOCON, 1, 30, IOCON_MODE_INACT, IOCON_FUNC2); */ /* USB VBUS */
 	
 	if (port == 1) {
 		Chip_IOCON_PinMux(LPC_IOCON, 0, 29, IOCON_MODE_INACT, IOCON_FUNC1);	/* P0.29 D1+, P0.30 D1- */
 		Chip_IOCON_PinMux(LPC_IOCON, 0, 30, IOCON_MODE_INACT, IOCON_FUNC1);
 		LPC_USB->USBClkCtrl = 0x12;                /* Dev, AHB clock enable */
-		while ((LPC_USB->USBClkSt & 0x12) != 0x12); 
+		while ((LPC_USB->USBClkSt & 0x12) != 0x12);
 	} else {
 		Chip_IOCON_PinMux(LPC_IOCON, 0, 31, IOCON_MODE_INACT, IOCON_FUNC1);	/* P0.31 D2+, D2- */
 		Chip_IOCON_PinMux(LPC_IOCON, 0, 14, IOCON_MODE_INACT, IOCON_FUNC3);
 		Chip_IOCON_PinMux(LPC_IOCON, 0, 13, IOCON_MODE_INACT, IOCON_FUNC1);
-		
+
 		LPC_USB->USBClkCtrl = 0x1A;                /* Dev, AHB clock enable */
-		while ((LPC_USB->USBClkSt & 0x1A) != 0x1A); 
+		while ((LPC_USB->USBClkSt & 0x1A) != 0x1A);
 		/* Port Select register when USB device is configured. */
-		LPC_USB->StCtrl = 0x3; 
+		LPC_USB->StCtrl = 0x3;
 	}
 
 }

@@ -382,10 +382,10 @@ uint32_t Chip_UART_SetBaudFDR(LPC_USART_T *pUART, uint32_t baudrate)
 
 {
 	uint32_t uClk;
-    uint32_t dval, mval;
-    uint32_t dl;
-    uint32_t rate16 = 16 * baudrate;
-	uint32_t actualRate = 0;
+	uint32_t actualRate = 0, d, m, bestd, bestm, tmp;
+	uint32_t current_error, best_error;
+	uint64_t best_divisor, divisor;
+	uint32_t recalcbaud;
 
 	/* Get Clock rate */
 #if defined(CHIP_LPC175X_6X)
@@ -394,44 +394,101 @@ uint32_t Chip_UART_SetBaudFDR(LPC_USART_T *pUART, uint32_t baudrate)
 	uClk = Chip_Clock_GetPeripheralClockRate();
 #endif
     
-    /* The fractional is calculated as (PCLK  % (16 * Baudrate)) / (16 * Baudrate)
-     * Let's make it to be the ratio DivVal / MulVal
-     */
-	dval = uClk % rate16;
+	/* In the Uart IP block, baud rate is calculated using FDR and DLL-DLM registers
+	 * The formula is :
+	 * BaudRate= uClk * (mulFracDiv/(mulFracDiv+dividerAddFracDiv) / (16 * (DLL)
+	 * It involves floating point calculations. That's the reason the formulae are adjusted with
+	 * Multiply and divide method.*/
+	/* The value of mulFracDiv and dividerAddFracDiv should comply to the following expressions:
+	 * 0 < mulFracDiv <= 15, 0 <= dividerAddFracDiv <= 15 */
+	best_error = 0xFFFFFFFF;/* Worst case */
+	bestd = 0;
+	bestm = 0;
+	best_divisor = 0;
+	for (m = 1; m <= 15; m++) {
+		for (d = 0; d < m; d++) {
 
-   /* The PCLK / (16 * Baudrate) is fractional
-    * => dval = pclk % rate16
-    * mval = rate16;
-    * now mormalize the ratio
-    * dval / mval = 1 / new_mval
-    * new_mval = mval / dval
-    * new_dval = 1
-    */
-    if (dval > 0) {
-        mval = rate16 / dval;
-        dval = 1;
+			/*   The result here is a fixed point number.  The integer portion is in the upper 32 bits.
+			 * The fractional portion is in the lower 32 bits.
+			 */
+			divisor = ((uint64_t) uClk << 28) * m / (baudrate * (m + d));
 
-        /* In case mval still bigger then 4 bits
-        * no adjustment require
-        */
-        if (mval > 12) {
-         dval = 0;
-      }
-    }
-    dval &= 0xf;
-    mval &= 0xf;
-    dl = uClk / (rate16 + rate16 *dval / mval);
+			/*   The fractional portion is the error. */
+			current_error = divisor & 0xFFFFFFFF;
+
+			/*   Snag the integer portion of the divisor. */
+			tmp = divisor >> 32;
+
+			/*   If closer to the next divisor... */
+			if (current_error > ((uint32_t) 1 << 31)) {
+
+				/* Increment to the next divisor... */
+				tmp++;
+
+				/* Now the error is the distance to the next divisor... */
+				current_error = -current_error;
+			}
+
+			/*   Can't use a divisor that's less than 1 or more than 65535. */
+			if ((tmp < 1) || (tmp > 65535)) {
+				/* Out of range */
+				continue;
+			}
+
+			/*   Also, if fractional divider is enabled can't use a divisor that is less than 3. */
+			if ((d != 0) && (tmp < 3)) {
+				/* Out of range */
+				continue;
+			}
+
+			/*   Do we have a new best? */
+			if (current_error < best_error) {
+				best_error = current_error;
+				best_divisor = tmp;
+				bestd = d;
+				bestm = m;
+
+				/*   If error is 0, that's perfect.  We're done. */
+				if (best_error == 0) {
+					break;
+				}
+			}
+		}	/* for (d) */
+
+		/*   If error is 0, that's perfect.  We're done. */
+		if (best_error == 0) {
+			break;
+		}
+	}	/* for (m) */
+
+	if (best_divisor == 0) {
+		/* can not find best match */
+		return 0;
+	}
+
+	recalcbaud = (uClk >> 4) * bestm / (best_divisor * (bestm + bestd));
+
+	/* reuse best_error to evaluate baud error */
+	if (baudrate > recalcbaud) {
+		best_error = baudrate - recalcbaud;
+	}
+	else {
+		best_error = recalcbaud - baudrate;
+	}
+
+	best_error = (best_error * 100) / baudrate;
 
     /* Update UART registers */
-    Chip_UART_EnableDivisorAccess(pUART);
-	Chip_UART_SetDivisorLatches(pUART, UART_LOAD_DLL(dl), UART_LOAD_DLM(dl));
+	Chip_UART_EnableDivisorAccess(pUART);
+	Chip_UART_SetDivisorLatches(pUART, UART_LOAD_DLL(best_divisor), UART_LOAD_DLM(best_divisor));
 	Chip_UART_DisableDivisorAccess(pUART);
 
 	/* Set best fractional divider */
-	pUART->FDR = (UART_FDR_MULVAL(mval) | UART_FDR_DIVADDVAL(dval));
+	pUART->FDR = (UART_FDR_MULVAL(bestm) | UART_FDR_DIVADDVAL(bestd));
 
 	/* Return actual baud rate */
-	actualRate = uClk / (16 * dl + 16 * dl * dval / mval);
+	actualRate = recalcbaud;
+
 	return actualRate;
 }
 

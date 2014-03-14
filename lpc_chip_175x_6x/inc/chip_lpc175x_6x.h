@@ -57,7 +57,7 @@ extern "C" {
 #define LPC_GPIO0_BASE            0x2009C000
 #define LPC_GPIO1_BASE            0x2009C020
 #define LPC_GPIO2_BASE            0x2009C040
-#define LPC_GPIO3_BASE            0x20098060
+#define LPC_GPIO3_BASE            0x2009C060
 #define LPC_GPIO4_BASE            0x2009C080
 
 /* APB0 peripheral */
@@ -146,6 +146,11 @@ extern "C" {
 #define LPC_CAN2                  ((LPC_CAN_T              *) LPC_CAN2_BASE)
 #define LPC_RITIMER               ((LPC_RITIMER_T          *) LPC_RITIMER_BASE)
 #define LPC_FMC                   ((LPC_FMC_T              *) LPC_FMC_BASE)
+
+/* IRQ Handler Alias list */
+#define UART_IRQHandler           UART0_IRQHandler
+#define I2C_IRQHandler            I2C0_IRQHandler
+#define SSP_IRQHandler            SSP0_IRQHandler
 
 /**
  * @}

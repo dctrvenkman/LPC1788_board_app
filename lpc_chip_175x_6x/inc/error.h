@@ -135,6 +135,14 @@ typedef enum {
 	/*0x00060009*/ ERR_I2C_TIMEOUT,
 	/*0x0006000A*/ ERR_I2C_BUFFER_UNDERFLOW,
 
+	/* UART related errors */
+	ERR_UART_BASE = 0x00080000,
+	/**\b 0x00080001*/ ERR_UART_RXD_BUSY = ERR_UART_BASE + 1, /*!< Receive is busy */
+	/**\b 0x00080002*/ ERR_UART_TXD_BUSY, /*!< Transmit is busy */
+	/**\b 0x00080003*/ ERR_UART_OVERRUN_FRAME_PARITY_NOISE, /*!< Overrun, Frame, Parity , Receive Noise error */
+	/**\b 0x00080004*/ ERR_UART_UNDERRUN, /*!< Underrun */
+	/**\b 0x00080005*/ ERR_UART_PARAM, /*!< Parameter error */
+
 	ERR_DMA_BASE = 0x000D0000,
 	/*0x000D0001*/ ERR_DMA_ERROR_INT = ERR_DMA_BASE + 1,
 	/*0x000D0002*/ ERR_DMA_CHANNEL_NUMBER,

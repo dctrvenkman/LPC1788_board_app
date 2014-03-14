@@ -102,8 +102,9 @@ void Chip_USB_Init(void)
 	/* Select PLL1/USBPLL as clock source for USB block and divider as 1 */
 	LPC_SYSCTL->USBCLKSEL = (SYSCTL_USBCLKSRC_USBPLL << 8) | 0x01;
 
+#endif /* defined(CHIP_LPC175X_6X) */
+
 	/* Enable AHB clock to the USB block and USB RAM. */
 	Chip_Clock_EnablePeriphClock(SYSCTL_CLOCK_USB);
 
-#endif /* defined(CHIP_LPC175X_6X) */
 }

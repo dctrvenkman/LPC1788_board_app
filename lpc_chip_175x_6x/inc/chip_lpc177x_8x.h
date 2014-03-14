@@ -155,6 +155,12 @@ extern "C" {
 #define LPC_CRC                   ((LPC_CRC_T              *) LPC_CRC_BASE)
 #define LPC_FMC                   ((LPC_FMC_T              *) LPC_FMC_BASE)
 
+/* IRQ Handler Alias list */
+#define UART_IRQHandler           UART0_IRQHandler
+#define I2C_IRQHandler            I2C0_IRQHandler
+#define SSP_IRQHandler            SSP0_IRQHandler
+
+
 /**
  * @}
  */
