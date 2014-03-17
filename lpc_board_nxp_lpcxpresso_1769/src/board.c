@@ -359,9 +359,9 @@ void Board_USBD_Init(uint32_t port)
 {
 	/* VBUS is not connected on the NXP LPCXpresso LPC1769, so leave the pin at default setting. */
 	/*Chip_IOCON_PinMux(LPC_IOCON, 1, 30, IOCON_MODE_INACT, IOCON_FUNC2);*/ /* USB VBUS */
-	
-	Chip_IOCON_PinMux(LPC_IOCON, 0, 29, IOCON_MODE_INACT, IOCON_FUNC1);	/* P0.29 D1+, P0.30 D1- */
-	Chip_IOCON_PinMux(LPC_IOCON, 0, 30, IOCON_MODE_INACT, IOCON_FUNC1);
+	Chip_IOCON_PinMux(LPC_IOCON, 0, 29, IOCON_MODE_INACT, IOCON_FUNC1);	/* P0.29 D1+ */
+	Chip_IOCON_PinMux(LPC_IOCON, 0, 30, IOCON_MODE_INACT, IOCON_FUNC1);	/* P0.30 D1- */
+	Chip_IOCON_PinMux(LPC_IOCON, 2, 9, IOCON_MODE_INACT, IOCON_FUNC1);	/* P2.9 USB_CONNECT1 */
 
 	LPC_USB->USBClkCtrl = 0x12;                /* Dev, AHB clock enable */
 	while ((LPC_USB->USBClkSt & 0x12) != 0x12); 
