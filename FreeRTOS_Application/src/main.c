@@ -128,6 +128,14 @@ void vApplicationTickHook( void )
 
 void prvSetupHardware( void )
 {
+	/*
+	 * TODO: Call Board_SystemInit() before main() which would do all this
+	 */
+
+	/*
+	 * TODO: Call Board_Init() here
+	 */
+
 	/* Disable peripherals power. */
 	LPC_SYSCTL->PCONP = 0;
 
