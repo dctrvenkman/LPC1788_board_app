@@ -32,6 +32,7 @@
 									<listOptionValue builtIn="false" value="__CODE_RED"/>
 									<listOptionValue builtIn="false" value="__REDLIB__"/>
 									<listOptionValue builtIn="false" value="CORE_M3"/>
+									<listOptionValue builtIn="false" value="__USE_LPCOPEN"/>
 								</option>
 								<option id="gnu.c.compiler.option.misc.other.644577272" name="Other flags" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0 -fno-builtin -ffunction-sections -Wextra" valueType="string"/>
 								<option id="gnu.c.compiler.option.preprocessor.nostdinc.242908842" name="Do not search system directories (-nostdinc)" superClass="gnu.c.compiler.option.preprocessor.nostdinc"/>
@@ -40,7 +41,7 @@
 								<option id="gnu.c.compiler.option.include.paths.383148579" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/RTOSDemo_RDB1768/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/RTOSDemo_RDB1768/src/LCD}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/RTOSDemo_RDB1768/src/LPCUSB}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/RTOSDemo_RDB1768/src/USB/inc}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/RTOSDemo_RDB1768/src/FreeRTOS/FreeRTOS/Source/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/RTOSDemo_RDB1768/src/FreeRTOS/FreeRTOS/Source/portable/GCC/ARM_CM3}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/RTOSDemo_RDB1768/src/FreeRTOS/FreeRTOS-Plus/Source/FreeRTOS-Plus-CLI}&quot;"/>
@@ -52,6 +53,8 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/RTOSDemo_RDB1768/src/FreeRTOS/FreeRTOS-Plus/Source/FreeRTOS-Plus-FAT-SL/psp/target/fat_sl}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/RTOSDemo_RDB1768/src/FreeRTOS/FreeRTOS-Plus/Source/FreeRTOS-Plus-FAT-SL/version}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/lpc_chip_175x_6x/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/lpc_chip_175x_6x/inc/usbd}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/lpc_board_nxp_lpcxpresso_1769/inc}&quot;"/>
 								</option>
 								<option id="com.crt.advproject.gcc.exe.debug.option.optimization.level.352418875" name="Optimization Level" superClass="com.crt.advproject.gcc.exe.debug.option.optimization.level"/>
 								<option id="gnu.c.compiler.option.optimization.flags.1797615292" name="Other optimization flags" superClass="gnu.c.compiler.option.optimization.flags"/>
@@ -77,6 +80,11 @@
 								<option id="com.crt.advproject.gas.arch.856827611" name="Architecture" superClass="com.crt.advproject.gas.arch" value="com.crt.advproject.gas.target.cm3" valueType="enumerated"/>
 								<option id="com.crt.advproject.gas.thumb.1906562556" name="Thumb mode" superClass="com.crt.advproject.gas.thumb" value="true" valueType="boolean"/>
 								<option id="gnu.both.asm.option.flags.crt.638939077" name="Assembler flags" superClass="gnu.both.asm.option.flags.crt" value="-c -x assembler-with-cpp -DDEBUG -D__CODE_RED -D__REDLIB__ " valueType="string"/>
+								<option id="gnu.both.asm.option.include.paths.1047021686" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/lpc_board_nxp_lpcxpresso_1769/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/RTOSDemo_RDB1768/src/USB/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/lpc_chip_175x_6x/inc/usbd}&quot;"/>
+								</option>
 								<inputType id="com.crt.advproject.assembler.input.1954791986" name="Additional Assembly Source Files" superClass="com.crt.advproject.assembler.input"/>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.884059935" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
@@ -95,8 +103,16 @@
 								<option id="gnu.c.link.option.nodeflibs.638645680" name="Do not use default libraries (-nodefaultlibs)" superClass="gnu.c.link.option.nodeflibs"/>
 								<option id="gnu.c.link.option.strip.195880545" name="Omit all symbol information (-s)" superClass="gnu.c.link.option.strip"/>
 								<option id="gnu.c.link.option.noshared.2075727134" name="No shared libraries (-static)" superClass="gnu.c.link.option.noshared"/>
-								<option id="gnu.c.link.option.libs.103012550" name="Libraries (-l)" superClass="gnu.c.link.option.libs"/>
-								<option id="gnu.c.link.option.paths.1400704377" name="Library search path (-L)" superClass="gnu.c.link.option.paths"/>
+								<option id="gnu.c.link.option.libs.103012550" name="Libraries (-l)" superClass="gnu.c.link.option.libs" valueType="libs">
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="lpc_board_nxp_lpcxpresso_1769"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="lpc_chip_175x_6x"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="usbd_175x_6x_lib"/>
+								</option>
+								<option id="gnu.c.link.option.paths.1400704377" name="Library search path (-L)" superClass="gnu.c.link.option.paths" valueType="libPaths">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/lpc_board_nxp_lpcxpresso_1769/Debug}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/lpc_chip_175x_6x/Debug}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/lpc_chip_175x_6x/libs}&quot;"/>
+								</option>
 								<option id="gnu.c.link.option.ldflags.1447780175" name="Linker flags" superClass="gnu.c.link.option.ldflags"/>
 								<option id="gnu.c.link.option.userobjs.1395709820" name="Other objects" superClass="gnu.c.link.option.userobjs"/>
 								<option id="gnu.c.link.option.shared.2052162401" name="Shared (-shared)" superClass="gnu.c.link.option.shared"/>
@@ -153,6 +169,7 @@
 									<listOptionValue builtIn="false" value="__CODE_RED"/>
 									<listOptionValue builtIn="false" value="__REDLIB__"/>
 									<listOptionValue builtIn="false" value="CORE_M3"/>
+									<listOptionValue builtIn="false" value="__USE_LPCOPEN"/>
 								</option>
 								<option id="gnu.c.compiler.option.misc.other.1084357971" name="Other flags" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0 -fno-builtin -ffunction-sections" valueType="string"/>
 								<option id="gnu.c.compiler.option.include.paths.352947793" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
@@ -164,6 +181,9 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/RTOSDemo_RDB1768/src/FreeRTOS-Plus-FAT-SL/psp/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/RTOSDemo_RDB1768/src/FreeRTOS-Plus-FAT-SL/psp/target/fat_sl}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/RTOSDemo_RDB1768/src/FreeRTOS-Plus-FAT-SL/version}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/lpc_board_nxp_lpcxpresso_1769/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/RTOSDemo_RDB1768/src/USB/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/lpc_chip_175x_6x/inc/usbd}&quot;"/>
 								</option>
 								<inputType id="com.crt.advproject.compiler.input.1760064385" superClass="com.crt.advproject.compiler.input"/>
 							</tool>
@@ -171,6 +191,11 @@
 								<option id="com.crt.advproject.gas.arch.1089759047" name="Architecture" superClass="com.crt.advproject.gas.arch" value="com.crt.advproject.gas.target.cm3" valueType="enumerated"/>
 								<option id="com.crt.advproject.gas.thumb.147071109" name="Thumb mode" superClass="com.crt.advproject.gas.thumb" value="true" valueType="boolean"/>
 								<option id="gnu.both.asm.option.flags.crt.2019607838" name="Assembler flags" superClass="gnu.both.asm.option.flags.crt" value="-c -x assembler-with-cpp -DNDEBUG -D__CODE_RED -D__REDLIB__ " valueType="string"/>
+								<option id="gnu.both.asm.option.include.paths.1045311319" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/lpc_board_nxp_lpcxpresso_1769/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/RTOSDemo_RDB1768/src/USB/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/lpc_chip_175x_6x/inc/usbd}&quot;"/>
+								</option>
 								<inputType id="com.crt.advproject.assembler.input.1748919550" name="Additional Assembly Source Files" superClass="com.crt.advproject.assembler.input"/>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1079614245" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
@@ -184,6 +209,16 @@
 								<option id="gnu.c.link.option.other.1143120921" name="Other options (-Xlinker [option])" superClass="gnu.c.link.option.other" valueType="stringList">
 									<listOptionValue builtIn="false" value="--gc-sections"/>
 									<listOptionValue builtIn="false" value="-Map=${BuildArtifactFileBaseName}.map"/>
+								</option>
+								<option id="gnu.c.link.option.libs.1836666353" name="Libraries (-l)" superClass="gnu.c.link.option.libs" valueType="libs">
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="&quot;${workspace_loc:/lpc_board_nxp_lpcxpresso_1769/Debug/liblpc_board_nxp_lpcxpresso_1769.a}&quot;"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="&quot;${workspace_loc:/lpc_chip_175x_6x/Debug/liblpc_chip_175x_6x.a}&quot;"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="&quot;${workspace_loc:/lpc_chip_175x_6x/libs/libusbd_175x_6x_lib.a}&quot;"/>
+								</option>
+								<option id="gnu.c.link.option.paths.904039731" name="Library search path (-L)" superClass="gnu.c.link.option.paths" valueType="libPaths">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/lpc_board_nxp_lpcxpresso_1769/Debug}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/lpc_chip_175x_6x/Debug}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/lpc_chip_175x_6x/libs}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.linker.input.1457924481" superClass="cdt.managedbuild.tool.gnu.c.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>

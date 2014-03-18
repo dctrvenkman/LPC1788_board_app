@@ -256,7 +256,7 @@ ResetISR(void) {
           "        strlt   r2, [r0], #4\n"
           "        blt     zero_loop");
 
-#ifdef __USE_CMSIS
+#if defined (__USE_CMSIS) || defined (__USE_LPCOPEN)
 	SystemInit();
 #endif
 
