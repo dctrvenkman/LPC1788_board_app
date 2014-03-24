@@ -119,7 +119,7 @@
 								<option id="gnu.c.link.option.soname.1795621625" name="Shared object name (-Wl,-soname=)" superClass="gnu.c.link.option.soname"/>
 								<option id="gnu.c.link.option.implname.939745637" name="Import Library name (-Wl,--out-implib=)" superClass="gnu.c.link.option.implname"/>
 								<option id="gnu.c.link.option.defname.905674991" name="DEF file name (-Wl,--output-def=)" superClass="gnu.c.link.option.defname"/>
-								<option id="com.crt.advproject.link.gcc.hdrlib.284228451" name="Use C library" superClass="com.crt.advproject.link.gcc.hdrlib" value="com.crt.advproject.gcc.link.hdrlib.codered.semihost" valueType="enumerated"/>
+								<option id="com.crt.advproject.link.gcc.hdrlib.284228451" name="Use C library" superClass="com.crt.advproject.link.gcc.hdrlib" value="com.crt.advproject.gcc.link.hdrlib.codered.nohost" valueType="enumerated"/>
 								<option id="com.crt.advproject.link.config.2135715637" name="%crt.mcu.configname" superClass="com.crt.advproject.link.config"/>
 								<option id="com.crt.advproject.link.store.1260276895" name="%crt.mcu.storename" superClass="com.crt.advproject.link.store"/>
 								<option id="com.crt.advproject.link.gcc.multicore.slave.1138879704" name="Multicore slave" superClass="com.crt.advproject.link.gcc.multicore.slave"/>

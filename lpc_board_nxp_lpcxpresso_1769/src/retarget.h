@@ -213,6 +213,7 @@ _STD_END
 	#define READFUNC __readc
 #endif
 
+#if 0
 #if defined(DEBUG_ENABLE)
 #if defined(DEBUG_SEMIHOSTING)
 /* Do nothing, semihosting is enabled by default in LPCXpresso */
@@ -248,4 +249,5 @@ int READFUNC(void)
 }
 
 #endif /* !defined(DEBUG_SEMIHOSTING) */
+#endif
 #endif /* defined ( __GNUC__ ) */

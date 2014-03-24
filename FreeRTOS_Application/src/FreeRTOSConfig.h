@@ -151,7 +151,7 @@ extern void vConfigureTimerForRunTimeStats( void );
 #define portGET_RUN_TIME_COUNTER_VALUE() LPC_TIMER0->TC
 
 
-/* Config for CLI */
-#define configCOMMAND_INT_MAX_OUTPUT_SIZE 1
+/* Max command size for CLI */
+#define configCOMMAND_INT_MAX_OUTPUT_SIZE	128
 
 #endif /* FREERTOS_CONFIG_H */

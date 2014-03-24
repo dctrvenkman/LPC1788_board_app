@@ -69,6 +69,7 @@
 /* Scheduler includes. */
 #include "FreeRTOS.h"
 #include "task.h"
+#include "semphr.h"
 
 /* Red Suite includes. */
 #include "lcd_driver.h"
@@ -80,6 +81,10 @@
 /* Task definition includes */
 #include "usb_task.h"
 
+
+#include "misc_cli_cmds.h"
+#include "cli_task.h"
+
 /*-----------------------------------------------------------*/
 
 /*
@@ -89,16 +94,24 @@ static void prvSetupHardware(void);
 
 /*-----------------------------------------------------------*/
 
+SemaphoreHandle_t usb_uart_connected_sem;
+
 int main(void)
 {
+	usb_uart_connected_sem = xSemaphoreCreateBinary();
+
 	/* Configure the hardware. */
 	prvSetupHardware();
 
     /* Create the USB task. */
-    xTaskCreate(vUSBTask, "USB", configMINIMAL_STACK_SIZE + 0x100, (void *) NULL, tskIDLE_PRIORITY, NULL);
+	USBInit(usb_uart_connected_sem);
+    //xTaskCreate(vUSBTask, "USB", configMINIMAL_STACK_SIZE + 0x100, (void *) NULL, tskIDLE_PRIORITY, NULL);
+    CLITaskInit(usb_uart_connected_sem);
 
-	//LCDdriver_initialisation();
-	//LCD_PrintString(5, 10, "FreeRTOS.org", 14, COLOR_GREEN);
+    //LCDdriver_initialisation();
+    //LCD_PrintString(5, 10, "FreeRTOS.org", 14, COLOR_GREEN);
+
+    registerMiscCmds();
 
     /* Start the scheduler. */
 	vTaskStartScheduler();
