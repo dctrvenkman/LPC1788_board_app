@@ -31,3 +31,5 @@
 /lpc_chip_177x_8x/libs/libusbd_40xx_lib.a
 /lpc_board_ea_devkit_1788/Debug
 /FreeRTOS_Application/LPC1788_Debug
+
+/board/Debug

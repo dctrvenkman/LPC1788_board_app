@@ -361,7 +361,7 @@ void Board_USBD_Init(uint32_t port)
 {
 	if(port == 2)
 	{
-		Chip_IOCON_PinMux(LPC_IOCON, 1, 30, IOCON_MODE_INACT, IOCON_FUNC2); /* USB VBUS */
+		//Chip_IOCON_PinMux(LPC_IOCON, 1, 30, IOCON_MODE_INACT, IOCON_FUNC2); /* USB VBUS */
 		Chip_IOCON_PinMux(LPC_IOCON, 0, 31, IOCON_MODE_INACT, IOCON_FUNC1);	/* USB_D+2 */
 		/* NOTE: USB_D-2 not muxed */
 		Chip_IOCON_PinMux(LPC_IOCON, 0, 14, IOCON_MODE_INACT, IOCON_FUNC3); /* USB_CONNECT2 */

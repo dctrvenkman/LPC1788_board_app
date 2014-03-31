@@ -3,6 +3,7 @@
 	<name>board</name>
 	<comment></comment>
 	<projects>
+		<project>lpc_chip_177x_8x</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

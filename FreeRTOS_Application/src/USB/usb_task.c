@@ -54,11 +54,7 @@ static void usb_pin_clk_init(void)
 	/* enable USB PLL and clocks */
 	Chip_USB_Init();
 	/* enable USB port on the board */
-#ifdef BOARD_LPC1788
 	Board_USBD_Init(2);
-#else
-	Board_USBD_Init(1);
-#endif
 }
 
 /*****************************************************************************
@@ -110,7 +106,6 @@ void USBInit(SemaphoreHandle_t usb_uart_connected_sem)
 
 	/* Initialize board and chip */
 	SystemCoreClockUpdate();
-	Board_Init();
 
 	StopWatch_Init();
 
