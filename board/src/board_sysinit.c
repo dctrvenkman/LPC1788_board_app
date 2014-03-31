@@ -41,19 +41,9 @@
 
 /* Pin muxing configuration */
 STATIC const PINMUX_GRP_T pinmuxing[] = {
-	/* CAN RD1 and TD1 */
-	{0x0, 0,  (IOCON_FUNC1 | IOCON_MODE_INACT)},
-	{0x0, 1,  (IOCON_FUNC1 | IOCON_MODE_INACT)},
 	/* UART 0 debug port (via USB bridge) */
 	{0x0, 2,  (IOCON_FUNC1 | IOCON_MODE_INACT)},
 	{0x0, 3,  (IOCON_FUNC1 | IOCON_MODE_INACT)},
-	/* I2S */
-	{0x0, 4,  (IOCON_FUNC1 | IOCON_MODE_INACT)},	/* I2S RX clock */
-	{0x0, 5,  (IOCON_FUNC1 | IOCON_MODE_INACT)},	/* I2S RX WS */
-	{0x0, 6,  (IOCON_FUNC1 | IOCON_MODE_INACT)},	/* I2S RX SDA */
-	{0x0, 7,  (IOCON_FUNC1 | IOCON_MODE_INACT | IOCON_DIGMODE_EN)},	/* I2S TX clock */
-	{0x0, 8,  (IOCON_FUNC1 | IOCON_MODE_INACT | IOCON_DIGMODE_EN)},	/* I2S TX WS */
-	{0x0, 9,  (IOCON_FUNC1 | IOCON_MODE_INACT | IOCON_DIGMODE_EN)},	/* I2S TX SDA */
 
 	{0x0, 13, (IOCON_FUNC1 | IOCON_MODE_INACT)},	/* USB LED */
 	{0x0, 14, (IOCON_FUNC3 | IOCON_MODE_INACT)},	/* USB Softconnect */
@@ -62,39 +52,18 @@ STATIC const PINMUX_GRP_T pinmuxing[] = {
 	{0x0, 16, (IOCON_FUNC1 | IOCON_MODE_INACT)},
 	{0x0, 17, (IOCON_FUNC1 | IOCON_MODE_INACT)},
 	{0x0, 18, (IOCON_FUNC1 | IOCON_MODE_INACT)},
-	/* ADC */
-	{0x0, 25, (IOCON_FUNC1 | IOCON_MODE_INACT | IOCON_ADMODE_EN)},
 	/* DAC */
 	{0x0, 26, (IOCON_FUNC2 | IOCON_DAC_EN | IOCON_HYS_EN | IOCON_MODE_PULLUP)},
 	/* USB */
 	{0x0, 29, (IOCON_FUNC1 | IOCON_MODE_INACT)},
 	{0x0, 30, (IOCON_FUNC1 | IOCON_MODE_INACT)},
 	{0x0, 31, (IOCON_FUNC1 | IOCON_MODE_INACT)},
-
-	/* ENET */
-	{0x1, 0, (IOCON_FUNC1 | IOCON_MODE_INACT)},
-	{0x1, 1, (IOCON_FUNC1 | IOCON_MODE_INACT)},
-	{0x1, 4, (IOCON_FUNC1 | IOCON_MODE_INACT)},
-	{0x1, 8, (IOCON_FUNC1 | IOCON_MODE_INACT)},
-	{0x1, 9, (IOCON_FUNC1 | IOCON_MODE_INACT)},
-	{0x1, 10, (IOCON_FUNC1 | IOCON_MODE_INACT)},
-	{0x1, 14, (IOCON_FUNC1 | IOCON_MODE_INACT)},
-	{0x1, 15, (IOCON_FUNC1 | IOCON_MODE_INACT)},
-	{0x1, 16, (IOCON_FUNC1 | IOCON_MODE_INACT)},
-	{0x1, 17, (IOCON_FUNC1 | IOCON_MODE_INACT)},
-	{0x1, 27, (IOCON_FUNC4 | IOCON_MODE_INACT | IOCON_DIGMODE_EN)}, /* CLKOUT */
-	{0x1, 30, (IOCON_FUNC2 | IOCON_MODE_INACT)}, /* USB_VBUS */
-
-	/* FIXME NOT COMPLETE */
-
-	/* LEDs */
-	{0x2, 26, (IOCON_FUNC0 | IOCON_MODE_INACT)},
-	{0x2, 27, (IOCON_FUNC0 | IOCON_MODE_INACT)},
 };
 
 /* EMC clock delay */
 #define CLK0_DELAY 7
 
+#if 0
 /* Keil SDRAM timing and chip Config */
 STATIC const IP_EMC_DYN_CONFIG_T IS42S32800D_config = {
 	EMC_NANOSECOND(64000000 / 4096),
@@ -131,38 +100,7 @@ STATIC const IP_EMC_DYN_CONFIG_T IS42S32800D_config = {
 		{0, 0, 0, 0}
 	}
 };
-
-/* NorFlash timing and chip Config */
-STATIC const IP_EMC_STATIC_CONFIG_T SST39VF320_config = {
-	0,
-	EMC_STATIC_CONFIG_MEM_WIDTH_16 |
-	EMC_STATIC_CONFIG_CS_POL_ACTIVE_LOW |
-	EMC_STATIC_CONFIG_BLS_HIGH /* |
-							      EMC_CONFIG_BUFFER_ENABLE*/,
-
-	EMC_NANOSECOND(0),
-	EMC_NANOSECOND(35),
-	EMC_NANOSECOND(70),
-	EMC_NANOSECOND(70),
-	EMC_NANOSECOND(40),
-	EMC_CLOCK(4)
-};
-
-/* NandFlash timing and chip Config */
-STATIC const IP_EMC_STATIC_CONFIG_T K9F1G_config = {
-	1,
-	EMC_STATIC_CONFIG_MEM_WIDTH_8 |
-	EMC_STATIC_CONFIG_CS_POL_ACTIVE_LOW |
-	EMC_STATIC_CONFIG_BLS_HIGH /* |
-							      EMC_CONFIG_BUFFER_ENABLE*/,
-
-	EMC_NANOSECOND(0),
-	EMC_NANOSECOND(35),
-	EMC_NANOSECOND(70),
-	EMC_NANOSECOND(70),
-	EMC_NANOSECOND(40),
-	EMC_CLOCK(4)
-};
+#endif
 
 /*****************************************************************************
  * Public types/enumerations/variables
@@ -183,11 +121,6 @@ void Board_SetupClocking(void)
 	Chip_SYSCTL_EnableBoost();
 
 	Chip_SetupXtalClocking();
-	
-	/* SPIFI clocking will be derived from Main PLL with a divider of 2 (60MHz) */
-	Chip_Clock_SetSPIFIClockDiv(2);
-	Chip_Clock_SetSPIFIClockSource(SYSCTL_SPIFICLKSRC_MAINPLL);
-
 }
 
 /* Sets up system pin muxing */
@@ -198,6 +131,7 @@ void Board_SetupMuxing(void)
 	Chip_Clock_EnablePeriphClock(SYSCTL_CLOCK_EMC);
 	Chip_SYSCTL_PeriphReset(SYSCTL_RESET_IOCON);
 
+#if 0
 	/* Setup data, address, and EMC control pins with high slew rate */
 	for (i = 3; i <= 4; i++) {
 		for (j = 0; j <= 31; j++) {
@@ -207,11 +141,13 @@ void Board_SetupMuxing(void)
 	for (i = 16; i <= 31; i++) {
 		Chip_IOCON_PinMuxSet(LPC_IOCON, 2, (uint8_t) i, (IOCON_FUNC1 | IOCON_FASTSLEW_EN));
 	}
+#endif
 
 	/* Setup system level pin muxing */
 	Chip_IOCON_SetPinMuxing(LPC_IOCON, pinmuxing, sizeof(pinmuxing) / sizeof(PINMUX_GRP_T));
 }
 
+#if 0
 /* Setup external memories */
 void Board_SetupExtMemory(void)
 {
@@ -231,21 +167,17 @@ void Board_SetupExtMemory(void)
 	/* Init EMC Dynamic Controller */
 	Chip_EMC_Dynamic_Init((IP_EMC_DYN_CONFIG_T *) &IS42S32800D_config);
 
-	/* Init EMC Static Controller CS0 */
-	Chip_EMC_Static_Init((IP_EMC_STATIC_CONFIG_T *) &SST39VF320_config);
-
-	
-	/* Init EMC Static Controller CS1 */
-	Chip_EMC_Static_Init((IP_EMC_STATIC_CONFIG_T *) &K9F1G_config);
-
 	/* EMC Shift Control */
 	LPC_SYSCTL->SCS |= 1;
 }
+#endif
 
 /* Set up and initialize hardware prior to call to main */
 void Board_SystemInit(void)
 {
 	Board_SetupMuxing();
 	Board_SetupClocking();
+#if 0
 	Board_SetupExtMemory();
+#endif
 }

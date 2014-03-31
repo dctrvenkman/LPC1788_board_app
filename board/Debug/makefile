@@ -23,25 +23,25 @@ endif
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target
-all: liblpc_board_ea_devkit_1788.a
+all: libboard.a
 
 # Tool invocations
-liblpc_board_ea_devkit_1788.a: $(OBJS) $(USER_OBJS)
+libboard.a: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: MCU Archiver'
-	arm-none-eabi-ar -r  "liblpc_board_ea_devkit_1788.a" $(OBJS) $(USER_OBJS) $(LIBS)
+	arm-none-eabi-ar -r  "libboard.a" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 	$(MAKE) --no-print-directory post-build
 
 # Other Targets
 clean:
-	-$(RM) $(OBJS)$(C_DEPS)$(ARCHIVES) liblpc_board_ea_devkit_1788.a
+	-$(RM) $(OBJS)$(C_DEPS)$(ARCHIVES) libboard.a
 	-@echo ' '
 
 post-build:
 	-@echo 'Performing post-build steps'
-	-arm-none-eabi-size "liblpc_board_ea_devkit_1788.a" ; # arm-none-eabi-objdump -h -S "liblpc_board_ea_devkit_1788.a" >"liblpc_board_ea_devkit_1788.lss"
+	-arm-none-eabi-size "libboard.a" ; # arm-none-eabi-objdump -h -S "libboard.a" >"libboard.lss"
 	-@echo ' '
 
 .PHONY: all clean dependents

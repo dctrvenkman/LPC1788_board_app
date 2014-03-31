@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>RTOSDemo_RDB1768</name>
+	<name>RTOSDemo</name>
 	<comment></comment>
 	<projects>
+		<project>board</project>
+		<project>lpc_chip_177x_8x</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

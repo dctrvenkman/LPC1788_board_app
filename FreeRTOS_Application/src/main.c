@@ -96,6 +96,29 @@ static void prvSetupHardware(void);
 
 SemaphoreHandle_t usb_uart_connected_sem;
 
+
+static void testTask1(void *pvParameters)
+{
+	while(1)
+	{
+		int i = 0;
+		for(;i < 100; i++)
+			;
+		vTaskDelay(2 * portTICK_PERIOD_MS);
+	}
+}
+
+static void testTask2(void *pvParameters)
+{
+	while(1)
+	{
+		int i = 0;
+		for(;i < 100; i++)
+			;
+		vTaskDelay(portTICK_PERIOD_MS);
+	}
+}
+
 int main(void)
 {
 	usb_uart_connected_sem = xSemaphoreCreateBinary();
@@ -107,6 +130,9 @@ int main(void)
 	USBInit(usb_uart_connected_sem);
     //xTaskCreate(vUSBTask, "USB", configMINIMAL_STACK_SIZE + 0x100, (void *) NULL, tskIDLE_PRIORITY, NULL);
     CLITaskInit(usb_uart_connected_sem);
+
+    xTaskCreate(testTask1, "test1", configMINIMAL_STACK_SIZE, (void *) NULL, tskIDLE_PRIORITY, NULL);
+    xTaskCreate(testTask2, "test2", configMINIMAL_STACK_SIZE, (void *) NULL, tskIDLE_PRIORITY, NULL);
 
     //LCDdriver_initialisation();
     //LCD_PrintString(5, 10, "FreeRTOS.org", 14, COLOR_GREEN);
@@ -144,8 +170,6 @@ void vApplicationStackOverflowHook(xTaskHandle pxTask, char *pcTaskName)
 
 void vConfigureTimerForRunTimeStats(void)
 {
-	const unsigned long TCR_COUNT_RESET = 2, CTCR_CTM_TIMER = 0x00, TCR_COUNT_ENABLE = 0x01;
-
 	/* This function configures a timer that is used as the time base when
 	collecting run time statistical information - basically the percentage
 	of CPU time that each task is utilising.  It is called automatically when
@@ -153,19 +177,9 @@ void vConfigureTimerForRunTimeStats(void)
 	to 1). */
 
 	/* Power up and feed the timer. */
-	LPC_SYSCTL->PCONP |= 0x02UL;
-	LPC_SYSCTL->PCLKSEL[0] = (LPC_SYSCTL->PCLKSEL[0] & (~(0x3<<2))) | (0x01 << 2);
-
-	/* Reset Timer 0 */
-	LPC_TIMER0->TCR = TCR_COUNT_RESET;
-
-	/* Just count up. */
-	LPC_TIMER0->CTCR = CTCR_CTM_TIMER;
-
-	/* Prescale to a frequency that is good enough to get a decent resolution,
-	but not too fast so as to overflow all the time. */
-	LPC_TIMER0->PR =  (configCPU_CLOCK_HZ / 10000UL) - 1UL;
-
-	/* Start the counter. */
-	LPC_TIMER0->TCR = TCR_COUNT_ENABLE;
+	Chip_TIMER_Init(LPC_TIMER0);
+	Chip_TIMER_Reset(LPC_TIMER0);
+	Chip_TIMER_TIMER_SetCountClockSrc(LPC_TIMER0, TIMER_CAPSRC_RISING_PCLK, 0);
+	Chip_TIMER_PrescaleSet(LPC_TIMER0, (configCPU_CLOCK_HZ / 100000UL) - 1UL);
+	Chip_TIMER_Enable(LPC_TIMER0);
 }

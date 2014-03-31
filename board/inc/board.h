@@ -57,7 +57,7 @@ extern "C" {
 #define DEBUG_UART LPC_UART0
 
 /* Board name */
-#define BOARD_EA_DEVKIT_1788
+#define BOARD_LPC1788
 
 #define FRAMEBUFFER_ADDR        EMC_ADDRESS_DYCS0	/*!< Frame buffer address for LCD */
 

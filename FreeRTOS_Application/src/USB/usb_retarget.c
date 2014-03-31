@@ -12,6 +12,10 @@
 #include "cdc_vcom.h"
 #include "usb_retarget.h"
 
+/* Scheduler includes. */
+#include "FreeRTOS.h"
+#include "task.h"
+
 // Function __write() / __sys_write
 //
 // Called by bottom level of printf routine within RedLib C library to write
@@ -35,6 +39,9 @@ int READFUNC(void)
 {
 	uint8_t c;
 	while(!vcom_bread(&c, 1))
-		;
+	{
+		/* TODO: Use semaphore instead of wait */
+		vTaskDelay(portTICK_PERIOD_MS);
+	}
 	return (int)c;
 }
