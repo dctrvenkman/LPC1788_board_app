@@ -41,23 +41,63 @@
 
 /* Pin muxing configuration */
 STATIC const PINMUX_GRP_T pinmuxing[] = {
-	/* UART 0 debug port (via USB bridge) */
-	{0x0, 2,  (IOCON_FUNC1 | IOCON_MODE_INACT)},
-	{0x0, 3,  (IOCON_FUNC1 | IOCON_MODE_INACT)},
+	/* Console */
+	{0, 0,  (IOCON_FUNC2 | IOCON_MODE_INACT)}, /* CONSOLE_TX */
+	{0, 1,  (IOCON_FUNC2 | IOCON_MODE_INACT)}, /* CONSOLE_RX */
 
-	{0x0, 13, (IOCON_FUNC1 | IOCON_MODE_INACT)},	/* USB LED */
-	{0x0, 14, (IOCON_FUNC3 | IOCON_MODE_INACT)},	/* USB Softconnect */
-	/* SSP 0 */
-	{0x0, 15, (IOCON_FUNC1 | IOCON_MODE_INACT)},	/* SSP CLK */
-	{0x0, 16, (IOCON_FUNC1 | IOCON_MODE_INACT)},
-	{0x0, 17, (IOCON_FUNC1 | IOCON_MODE_INACT)},
-	{0x0, 18, (IOCON_FUNC1 | IOCON_MODE_INACT)},
+	/* LCD */
+	{0, 4,  (IOCON_FUNC7 | IOCON_MODE_INACT)}, /* R0 */
+	{0, 5,  (IOCON_FUNC7 | IOCON_MODE_INACT)}, /* R1 */
+	{0, 6,  (IOCON_FUNC7 | IOCON_MODE_INACT)}, /* G0 */
+	{0, 7,  (IOCON_FUNC7 | IOCON_MODE_INACT)}, /* G1 */
+	{0, 8,  (IOCON_FUNC7 | IOCON_MODE_INACT)}, /* B0 */
+	{0, 9,  (IOCON_FUNC7 | IOCON_MODE_INACT)}, /* B1 */
+
+	/* Ext. UART */
+	{0, 10, (IOCON_FUNC1 | IOCON_MODE_INACT)}, /* EXT_UART_TX */
+	{0, 11, (IOCON_FUNC1 | IOCON_MODE_INACT)}, /* EXT_UART_RX */
+
+	/* USB Device */
+	{0, 13, (IOCON_FUNC1 | IOCON_MODE_INACT)}, /* USB_UP_LED2 */
+	{0, 14, (IOCON_FUNC3 | IOCON_MODE_INACT)}, /* USB_CONNECT2 */
+
+	/* SPI Flash */
+	{0, 15, (IOCON_FUNC2 | IOCON_MODE_INACT)}, /* SPI_FLASH_SCK */
+	{0, 16, (IOCON_FUNC2 | IOCON_MODE_INACT)}, /* SPI_FLASH_CS */
+	{0, 17, (IOCON_FUNC2 | IOCON_MODE_INACT)}, /* SPI_FLASH_MISO */
+	{0, 18, (IOCON_FUNC2 | IOCON_MODE_INACT)}, /* SPI_FLASH_MOSI */
+
+	/* SD Card */
+	{0, 19, (IOCON_FUNC2 | IOCON_MODE_INACT)}, /* SD_CLK */
+	{0, 20, (IOCON_FUNC2 | IOCON_MODE_INACT)}, /* SD_CMD */
+	{0, 22, (IOCON_FUNC2 | IOCON_MODE_INACT)}, /* SD_DAT[0] */
+
+	/* GPIO */
+	{0, 23, (IOCON_FUNC0 | IOCON_MODE_INACT)}, /* GPIO 2 */
+
 	/* DAC */
-	{0x0, 26, (IOCON_FUNC2 | IOCON_DAC_EN | IOCON_HYS_EN | IOCON_MODE_PULLUP)},
+	{0, 26, (IOCON_FUNC2 | IOCON_DAC_EN | IOCON_HYS_EN | IOCON_MODE_PULLUP)}, /* DAC_OUT */
+
+	/* I2C */
+	/* TODO: look at special pad func Section 22.1 */
+	{0, 27,  (IOCON_FUNC1 | IOCON_MODE_INACT)}, /* SDA */
+	{0, 28,  (IOCON_FUNC1 | IOCON_MODE_INACT)}, /* SCL */
+
+
+	/* External Interrupts */
+	/* TODO: check special pad func */
+	{0, 29,  (IOCON_FUNC2 | IOCON_MODE_INACT)}, /* KEY_INT */
+
 	/* USB */
-	{0x0, 29, (IOCON_FUNC1 | IOCON_MODE_INACT)},
-	{0x0, 30, (IOCON_FUNC1 | IOCON_MODE_INACT)},
-	{0x0, 31, (IOCON_FUNC1 | IOCON_MODE_INACT)},
+	{0, 31,  (IOCON_FUNC1 | IOCON_MODE_INACT)}, /* USB_D+2 */
+	/* NOTE: USB_D-2 is not muxed */
+
+
+	/* PORT 1 */
+
+
+
+
 };
 
 /* EMC clock delay */
