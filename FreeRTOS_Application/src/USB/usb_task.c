@@ -48,15 +48,6 @@ const  USBD_API_T *g_pUsbApi = &g_usbApi;
  * Private functions
  ****************************************************************************/
 
-/* Initialize pin and clocks for USB0/USB1 port */
-static void usb_pin_clk_init(void)
-{
-	/* enable USB PLL and clocks */
-	Chip_USB_Init();
-	/* enable USB port on the board */
-	Board_USBD_Init(2);
-}
-
 /*****************************************************************************
  * Public functions
  ****************************************************************************/
@@ -108,9 +99,6 @@ void USBInit(SemaphoreHandle_t usb_uart_connected_sem)
 	SystemCoreClockUpdate();
 
 	StopWatch_Init();
-
-	/* enable clocks and pinmux */
-	usb_pin_clk_init();
 
 	/* initialize call back structures */
 	memset((void *) &usb_param, 0, sizeof(USBD_API_INIT_PARAM_T));

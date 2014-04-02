@@ -1,32 +1,5 @@
 /*
- * @brief Embedded Artists LPC1788 and LPC4088 Development Kit board file
- *
- * @note
- * Copyright(C) NXP Semiconductors, 2012
- * All rights reserved.
- *
- * @par
- * Software that is described herein is for illustrative purposes only
- * which provides customers with programming information regarding the
- * LPC products.  This software is supplied "AS IS" without any warranties of
- * any kind, and NXP Semiconductors and its licensor disclaim any and
- * all warranties, express or implied, including all implied warranties of
- * merchantability, fitness for a particular purpose and non-infringement of
- * intellectual property rights.  NXP Semiconductors assumes no responsibility
- * or liability for the use of the software, conveys no license or rights under any
- * patent, copyright, mask work right, or any other intellectual property rights in
- * or to any products. NXP Semiconductors reserves the right to make changes
- * in the software without notification. NXP Semiconductors also makes no
- * representation or warranty that such application will be suitable for the
- * specified use without further testing or modification.
- *
- * @par
- * Permission to use, copy, modify, and distribute this software and its
- * documentation is hereby granted, under NXP Semiconductors' and its
- * licensor's relevant copyrights in the software, without fee, provided that it
- * is used in conjunction with NXP Semiconductors microcontrollers.  This
- * copyright, permission, and disclaimer notice must appear in all copies of
- * this code.
+ * LPC1788 Board
  */
 
 #include "board.h"
@@ -90,22 +63,10 @@ static void delayMs(uint32_t ms)
  * Public functions
  ****************************************************************************/
 
-/* Initialize UART pins */
-void Board_UART_Init(LPC_USART_T *pUART)
-{
-	if(pUART == LPC_UART0)
-	{
-		Chip_IOCON_PinMuxSet(LPC_IOCON, 0, 2, (IOCON_FUNC1 | IOCON_MODE_INACT)); /* U0_TXD */
-		Chip_IOCON_PinMuxSet(LPC_IOCON, 0, 3, (IOCON_FUNC1 | IOCON_MODE_INACT)); /* U0_RXD */
-	}
-}
-
 /* Initialize debug output via UART for board */
 void Board_Debug_Init(void)
 {
 #if defined(DEBUG_UART)
-	Board_UART_Init(DEBUG_UART);
-
 	Chip_UART_Init(DEBUG_UART);
 	Chip_UART_SetBaud(DEBUG_UART, 115200);
 	Chip_UART_ConfigData(DEBUG_UART, UART_LCR_WLEN8 | UART_LCR_SBS_1BIT | UART_LCR_PARITY_DIS);
@@ -155,6 +116,10 @@ void Board_Init(void)
 	/* Initializes GPIO */
 	Chip_GPIO_Init(LPC_GPIO);
 	Chip_IOCON_Init(LPC_IOCON);
+
+	/* Enable USB PLL and clocks */
+	Chip_USB_Init();
+	Board_USBD_Init();
 }
 
 #if 0
@@ -305,38 +270,6 @@ void Board_SetLCDBacklight(uint8_t Intensity)
 
 	Chip_GPIO_WritePortBit(LPC_GPIO, LCD_BACKLIGHT_PORTNUM, LCD_BACKLIGHT_PINNUM, OnOff);
 }
-
-/* Sets up board specific I2C interface */
-void Board_I2C_Init(I2C_ID_T id)
-{
-	switch (id) {
-	case I2C0:
-		Chip_IOCON_PinMuxSet(LPC_IOCON, 0, 27, IOCON_FUNC1);
-		Chip_IOCON_PinMuxSet(LPC_IOCON, 0, 28, IOCON_FUNC1);
-		break;
-
-	case I2C1:
-		Chip_IOCON_PinMuxSet(LPC_IOCON, 2, 14, (IOCON_FUNC2 | IOCON_MODE_PULLUP | IOCON_OPENDRAIN_EN));
-		Chip_IOCON_PinMuxSet(LPC_IOCON, 2, 15, (IOCON_FUNC2 | IOCON_MODE_PULLUP | IOCON_OPENDRAIN_EN));
-		break;
-
-	case I2C2:
-		Chip_IOCON_PinMuxSet(LPC_IOCON, 2, 30, (IOCON_FUNC2 | IOCON_MODE_PULLUP | IOCON_OPENDRAIN_EN));
-		Chip_IOCON_PinMuxSet(LPC_IOCON, 2, 31, (IOCON_FUNC2 | IOCON_MODE_PULLUP | IOCON_OPENDRAIN_EN));
-		break;
-
-	default:
-		return;
-	}
-}
-
-/* Pin mux for Event Monitor/Recorder */
-void Board_RTC_EV_Init(void)
-{
-	Chip_IOCON_PinMuxSet(LPC_IOCON, 0, 7, (IOCON_FUNC4 | IOCON_MODE_INACT));
-	Chip_IOCON_PinMuxSet(LPC_IOCON, 0, 8, (IOCON_FUNC4 | IOCON_MODE_INACT));
-	Chip_IOCON_PinMuxSet(LPC_IOCON, 0, 9, (IOCON_FUNC4 | IOCON_MODE_INACT));
-}
 #endif
 
 /* Create Serial Stream */
@@ -345,32 +278,12 @@ void Serial_CreateStream(void *Stream)
 	/* To be implemented */
 }
 
-/* Setup board for SD Card interface */
-void Board_SDC_Init(void)
+/* Setup board for USB Device use */
+void Board_USBD_Init(void)
 {
-	Chip_IOCON_PinMuxSet(LPC_IOCON, 0, 19, (IOCON_FUNC2 | IOCON_MODE_INACT));	/* SD_CLK */
-	Chip_IOCON_PinMuxSet(LPC_IOCON, 0, 20, (IOCON_FUNC2 | IOCON_MODE_INACT));	/* SD_CMD */
-	Chip_IOCON_PinMuxSet(LPC_IOCON, 0, 22, (IOCON_FUNC2 | IOCON_MODE_INACT));	/* SD_DAT[0] */
-	Chip_IOCON_PinMuxSet(LPC_IOCON, 1, 7, (IOCON_FUNC2 | IOCON_MODE_INACT));	/* SD_DAT[1] */
-	Chip_IOCON_PinMuxSet(LPC_IOCON, 1, 11, (IOCON_FUNC2 | IOCON_MODE_INACT));	/* SD_DAT[2] */
-	Chip_IOCON_PinMuxSet(LPC_IOCON, 1, 12, (IOCON_FUNC2 | IOCON_MODE_INACT));	/* SD_DAT[3] */
-	Chip_IOCON_PinMuxSet(LPC_IOCON, 2, 15, (IOCON_FUNC0 | IOCON_MODE_INACT));	/* SD_DET */
-}
-
-void Board_USBD_Init(uint32_t port)
-{
-	if(port == 2)
-	{
-		//Chip_IOCON_PinMux(LPC_IOCON, 1, 30, IOCON_MODE_INACT, IOCON_FUNC2); /* USB VBUS */
-		Chip_IOCON_PinMux(LPC_IOCON, 0, 31, IOCON_MODE_INACT, IOCON_FUNC1);	/* USB_D+2 */
-		/* NOTE: USB_D-2 not muxed */
-		Chip_IOCON_PinMux(LPC_IOCON, 0, 14, IOCON_MODE_INACT, IOCON_FUNC3); /* USB_CONNECT2 */
-		Chip_IOCON_PinMux(LPC_IOCON, 0, 13, IOCON_MODE_INACT, IOCON_FUNC1); /* USB_UP_LED2 */
-
-		LPC_USB->USBClkCtrl = 0x1A; /* Dev, AHB clock enable */
-		while ((LPC_USB->USBClkSt & 0x1A) != 0x1A)
-			;
-		/* Port Select register when USB device is configured. */
-		LPC_USB->StCtrl = 0x3;
-	}
+	LPC_USB->USBClkCtrl = 0x1A; /* Dev, AHB clock enable */
+	while ((LPC_USB->USBClkSt & 0x1A) != 0x1A)
+		;
+	/* Port Select register when USB device is configured. */
+	LPC_USB->StCtrl = 0x3;
 }
