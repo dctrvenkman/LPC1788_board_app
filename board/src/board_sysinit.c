@@ -178,7 +178,6 @@ STATIC const IP_EMC_DYN_CONFIG_T AS4C8M16S_config = {
 			EMC_DYN_MODE_BURST_LEN_4,
 
 			EMC_DYN_CONFIG_DATA_BUS_16 |
-			EMC_DYN_CONFIG_LPSDRAM | /* TODO: Check if Bank, Row, Column */
 			EMC_DYN_CONFIG_8Mx16_4BANKS_12ROWS_9COLS |
 			EMC_DYN_CONFIG_MD_SDRAM
 		},
@@ -246,5 +245,5 @@ void Board_SystemInit(void)
 {
 	Board_SetupMuxing();
 	Board_SetupClocking();
-	//Board_SetupExtMemory();
+	Board_SetupExtMemory();
 }
