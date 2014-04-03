@@ -157,6 +157,18 @@ void vApplicationTickHook(void)
 void prvSetupHardware(void)
 {
 	Board_Init();
+
+	{ /* TEST SD CARD */
+		SDMMC_CARD_T sdCardInfo;
+		memset(&sdCardInfo, 0, sizeof(sdCardInfo));
+		sdCardInfo.evsetup_cb = setupEvWakeup;
+		sdCardInfo.waitfunc_cb = waitEvIRQDriven;
+		sdCardInfo.msdelay_func = waitMs;
+
+		Chip_SDC_Init(LPC_SDC);
+
+		Chip_SDMMC_Acquire(LPC_SDC, &sdCardInfo);
+	}
 }
 
 void vApplicationStackOverflowHook(xTaskHandle pxTask, char *pcTaskName)

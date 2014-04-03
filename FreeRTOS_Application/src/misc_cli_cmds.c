@@ -28,7 +28,7 @@ static portBASE_TYPE memTestCbk(int8_t* writeBuffer, size_t writeBufferLen, cons
 	portBASE_TYPE ret = 0;
 	uint32_t* fail_addr;
 	uint32_t is_val, ex_val;
-	MEM_TEST_SETUP_T test = {EMC_ADDRESS_DYCS0, 8 * 1024 * 1024, fail_addr, is_val, ex_val};
+	MEM_TEST_SETUP_T test = {EMC_ADDRESS_DYCS0, 1 * 1024 * 1024, fail_addr, is_val, ex_val};
 	bool passed = false;
 
 	passed = mem_test_walking0(&test);

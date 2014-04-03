@@ -245,5 +245,7 @@ void Board_SystemInit(void)
 {
 	Board_SetupMuxing();
 	Board_SetupClocking();
-	Board_SetupExtMemory();
+
+	// Doesn't work as A0 is miswired
+	//Board_SetupExtMemory();
 }
