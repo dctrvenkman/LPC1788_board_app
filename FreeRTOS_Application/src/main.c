@@ -167,7 +167,33 @@ void prvSetupHardware(void)
 
 		Chip_SDC_Init(LPC_SDC);
 
-		Chip_SDMMC_Acquire(LPC_SDC, &sdCardInfo);
+		/* Enable SD interrupt */
+		NVIC_EnableIRQ(SDC_IRQn);
+
+
+		rc = f_mount(0, &fatFS);		/* Register volume work area (never fails) */
+		rc = f_open(&fileObj, "MESSAGE.TXT", FA_READ);
+		if (rc) {
+			die(rc);
+		}
+		else
+		{
+			for(;;)
+			{
+				/* Read a chunk of file */
+				rc = f_read(&fileObj, buffer, sizeof buffer, &br);
+				if(rc || !br)
+					break;					/* Error or end of file */
+				ptr = (uint8_t *) buffer;
+				for(i = 0; i < br; i++)/* Type the data */
+					DEBUGOUT("%c", ptr[i]);
+			}
+			if(rc)
+				die(rc);
+			rc = f_close(&fileObj);
+			if(rc)
+				die(rc);
+		}
 	}
 }
 
