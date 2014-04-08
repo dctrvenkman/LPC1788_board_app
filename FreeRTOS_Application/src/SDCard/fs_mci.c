@@ -32,6 +32,7 @@
 #include "fsmci_cfg.h"
 #include "board.h"
 #include "chip.h"
+#include "ff.h"
 
 /*****************************************************************************
  * Private types/enumerations/variables
@@ -49,9 +50,45 @@ static CARD_HANDLE_T *hCard;
  * Public types/enumerations/variables
  ****************************************************************************/
 
+/* buffer size (in byte) for R/W operations */
+#define BUFFER_SIZE     4096
+
+STATIC FATFS fatFS;	/* File system object */
+STATIC FIL fileObj;	/* File object */
+STATIC INT buffer[BUFFER_SIZE / 4];		/* Working buffer */
+STATIC volatile int32_t sdcWaitExit = 0;
+STATIC SDMMC_EVENT_T *event;
+STATIC volatile Status  eventResult = ERROR;
+
 /*****************************************************************************
  * Private functions
  ****************************************************************************/
+
+/**
+ * @brief	GPDMA interrupt handler sub-routine
+ * @return	Nothing
+ */
+void DMA_IRQHandler(void)
+{
+	eventResult = Chip_GPDMA_Interrupt(LPC_GPDMA, event->DmaChannel);
+	sdcWaitExit = 1;
+	NVIC_DisableIRQ(DMA_IRQn);
+}
+
+/**
+ * @brief	SDC interrupt handler sub-routine
+ * @return	Nothing
+ */
+void SDIO_IRQHandler(void)
+{
+	int32_t Ret;
+	Ret = Chip_SDMMC_IRQHandler(LPC_SDC, NULL,0,NULL,0);
+	if(Ret < 0)
+	{
+		eventResult = ERROR;
+		sdcWaitExit = 1;
+	}
+}
 
 /*****************************************************************************
  * Public functions

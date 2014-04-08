@@ -84,6 +84,7 @@
 
 #include "misc_cli_cmds.h"
 #include "cli_task.h"
+#include "sd_disk.h"
 
 /*-----------------------------------------------------------*/
 
@@ -101,10 +102,7 @@ static void testTask1(void *pvParameters)
 {
 	while(1)
 	{
-		int i = 0;
-		for(;i < 100; i++)
-			;
-		vTaskDelay(2 * portTICK_PERIOD_MS);
+		sd_test();
 	}
 }
 
@@ -127,11 +125,10 @@ int main(void)
 	prvSetupHardware();
 
     /* Create the USB task. */
-	USBInit(usb_uart_connected_sem);
-    //xTaskCreate(vUSBTask, "USB", configMINIMAL_STACK_SIZE + 0x100, (void *) NULL, tskIDLE_PRIORITY, NULL);
-    CLITaskInit(usb_uart_connected_sem);
+	//USBInit(usb_uart_connected_sem);
+    //CLITaskInit(usb_uart_connected_sem);
 
-    xTaskCreate(testTask1, "test1", configMINIMAL_STACK_SIZE, (void *) NULL, tskIDLE_PRIORITY, NULL);
+    xTaskCreate(testTask1, "test1", configMINIMAL_STACK_SIZE * 10, (void *) NULL, tskIDLE_PRIORITY + 1, NULL);
     xTaskCreate(testTask2, "test2", configMINIMAL_STACK_SIZE, (void *) NULL, tskIDLE_PRIORITY, NULL);
 
     //LCDdriver_initialisation();
@@ -157,44 +154,6 @@ void vApplicationTickHook(void)
 void prvSetupHardware(void)
 {
 	Board_Init();
-
-	{ /* TEST SD CARD */
-		SDMMC_CARD_T sdCardInfo;
-		memset(&sdCardInfo, 0, sizeof(sdCardInfo));
-		sdCardInfo.evsetup_cb = setupEvWakeup;
-		sdCardInfo.waitfunc_cb = waitEvIRQDriven;
-		sdCardInfo.msdelay_func = waitMs;
-
-		Chip_SDC_Init(LPC_SDC);
-
-		/* Enable SD interrupt */
-		NVIC_EnableIRQ(SDC_IRQn);
-
-
-		rc = f_mount(0, &fatFS);		/* Register volume work area (never fails) */
-		rc = f_open(&fileObj, "MESSAGE.TXT", FA_READ);
-		if (rc) {
-			die(rc);
-		}
-		else
-		{
-			for(;;)
-			{
-				/* Read a chunk of file */
-				rc = f_read(&fileObj, buffer, sizeof buffer, &br);
-				if(rc || !br)
-					break;					/* Error or end of file */
-				ptr = (uint8_t *) buffer;
-				for(i = 0; i < br; i++)/* Type the data */
-					DEBUGOUT("%c", ptr[i]);
-			}
-			if(rc)
-				die(rc);
-			rc = f_close(&fileObj);
-			if(rc)
-				die(rc);
-		}
-	}
 }
 
 void vApplicationStackOverflowHook(xTaskHandle pxTask, char *pcTaskName)

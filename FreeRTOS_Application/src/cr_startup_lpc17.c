@@ -110,7 +110,7 @@ void CAN_IRQHandler(void) ALIAS(IntDefaultHandler);
 void DMA_IRQHandler(void) ALIAS(IntDefaultHandler);
 void I2S_IRQHandler(void) ALIAS(IntDefaultHandler);
 void ENET_IRQHandler(void) ALIAS(IntDefaultHandler);
-void RIT_IRQHandler(void) ALIAS(IntDefaultHandler);
+void SDIO_IRQHandler(void) ALIAS(IntDefaultHandler);
 void MCPWM_IRQHandler(void) ALIAS(IntDefaultHandler);
 void QEI_IRQHandler(void) ALIAS(IntDefaultHandler);
 void PLL1_IRQHandler(void) ALIAS(IntDefaultHandler);
@@ -202,7 +202,7 @@ void (* const g_pfnVectors[])(void) =
 	DMA_IRQHandler,							// 42, 0xa8 - GP DMA
 	I2S_IRQHandler,							// 43, 0xac - I2S
 	ENET_IRQHandler,                      	// 44, 0xb0 - Ethernet
-	RIT_IRQHandler,							// 45, 0xb4 - RITINT
+	SDIO_IRQHandler,						// 45, 0xb4 - SD/MMC card I/F
 	MCPWM_IRQHandler,						// 46, 0xb8 - Motor Control PWM
 	QEI_IRQHandler,							// 47, 0xbc - Quadrature Encoder
 	PLL1_IRQHandler,						// 48, 0xc0 - PLL1 (USB PLL)

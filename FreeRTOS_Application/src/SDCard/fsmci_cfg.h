@@ -42,6 +42,11 @@
 #include "diskio.h"
 #include "board.h"
 
+/* Scheduler includes. */
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
+
 typedef SDMMC_CARD_T CARD_HANDLE_T;
 
 /**
@@ -144,9 +149,9 @@ extern void rtc_initialize(void);   /**< RTC initialization function */
  */
 STATIC INLINE int FSMCI_CardReadyWait(CARD_HANDLE_T *hCrd, int tout)
 {
-	extern volatile uint32_t timerCntms;
-	uint32_t init = timerCntms;
-	while (timerCntms < init + tout) {
+	while(tout--)
+	{
+		vTaskDelay(portTICK_PERIOD_MS);
 		if (Chip_SDMMC_GetCardStatus(LPC_SDC, hCrd) & R1_READY_FOR_DATA)
 			return 1;
 	}
