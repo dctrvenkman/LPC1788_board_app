@@ -169,7 +169,7 @@ void initDynMem(LPC_EMC_T *pEMC, IP_EMC_DYN_CONFIG_T *Dynamic_Config, uint32_t E
 		DynAddr = Dynamic_Config->DevConfig[ChipSelect].BaseAddr;
 
 		if (DynAddr != 0) {
-			uint32_t temp;
+			volatile uint32_t temp;
 			uint32_t ModeRegister;
 			ModeRegister = Dynamic_Config->DevConfig[ChipSelect].ModeRegister;
 			temp = *((volatile uint32_t *) (DynAddr | (ModeRegister << Col_len)));

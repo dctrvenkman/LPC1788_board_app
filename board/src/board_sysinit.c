@@ -155,15 +155,15 @@ STATIC const PINMUX_GRP_T pinmuxing[] = {
 /* SDRAM timing and chip Config for AS4C8M16S-7 */
 STATIC const IP_EMC_DYN_CONFIG_T AS4C8M16S_config = {
 	EMC_NANOSECOND(64000000 / 4096), /* 4096 refresh cycles per 64ms */
-	1,					/* Command Delayed */ /* TODO: Check value */
+	1,					/* Command Delayed */ /* TODO: Check value 1 */
 	3,					/* tRP */
 	7,					/* tRAS */
 	EMC_NANOSECOND(70),	/* tSREX */
-	EMC_CLOCK(1),		/* tAPR */ /* TODO: Check value */
+	EMC_CLOCK(1),		/* tAPR */ /* TODO: Check value 1 */
 	EMC_CLOCK(5),		/* tDAL */
 	EMC_NANOSECOND(20),	/* tWR */
 	EMC_NANOSECOND(63),	/* tRC */
-	EMC_NANOSECOND(63),	/* tRFC */ /* TODO: Check value */
+	EMC_NANOSECOND(63),	/* tRFC */ /* TODO: Check value 63 */
 	EMC_NANOSECOND(65),	/* tXSR */
 	EMC_NANOSECOND(14),	/* tRRD */
 	EMC_CLOCK(2),		/* tMRD */
@@ -173,7 +173,7 @@ STATIC const IP_EMC_DYN_CONFIG_T AS4C8M16S_config = {
 			2,	/* RAS */
 			EMC_DYN_MODE_WBMODE_PROGRAMMED |
 			EMC_DYN_MODE_OPMODE_STANDARD |
-			EMC_DYN_MODE_CAS_2 |
+			EMC_DYN_MODE_CAS_3 |
 			EMC_DYN_MODE_BURST_TYPE_SEQUENTIAL |
 			EMC_DYN_MODE_BURST_LEN_4,
 
@@ -247,5 +247,5 @@ void Board_SystemInit(void)
 	Board_SetupClocking();
 
 	// Doesn't work as A0 is miswired
-	//Board_SetupExtMemory();
+	Board_SetupExtMemory();
 }
