@@ -162,6 +162,7 @@ unsigned int SDRAM_BASE_ADDR = 0xa0000000;
 
 #define P2C(Period)           (((Period<SDRAM_PERIOD)?0:(unsigned int)((float)Period/SDRAM_PERIOD))+1)
 
+#if 0
 #define SDRAM_REFRESH         7813
 #define SDRAM_TRP             20
 #define SDRAM_TRAS            45
@@ -173,6 +174,20 @@ unsigned int SDRAM_BASE_ADDR = 0xa0000000;
 #define SDRAM_TXSR            67
 #define SDRAM_TRRD            15
 #define SDRAM_TMRD            3
+#else
+#define SDRAM_REFRESH         7829
+#define SDRAM_TRP             21
+#define SDRAM_TRAS            42
+#define SDRAM_TAPR            1
+#define SDRAM_TDAL            5
+#define SDRAM_TWR             2
+#define SDRAM_TRC             63
+#define SDRAM_TRFC            63
+#define SDRAM_TXSR            65
+#define SDRAM_TRRD            14
+#define SDRAM_TMRD            2
+#endif
+
 
 /*************************************************************************
  * Function Name: SDRAM_Init
@@ -282,19 +297,20 @@ void prvSetupHardware(void)
 	Board_Init();
 
 #if 1
-	SDRAM_Init();
 	{
+		volatile int i;
 		uint32_t* fail_addr;
 		uint32_t is_val, ex_val;
 		MEM_TEST_SETUP_T test = {EMC_ADDRESS_DYCS0, 16 * 1024 * 1024, fail_addr, is_val, ex_val};
 		bool passed = false;
-		memset(EMC_ADDRESS_DYCS0, 0xffffffff, 1024 * 1024);
-		memset(EMC_ADDRESS_DYCS0, 0x0, 1024 * 1024);
-		memset(EMC_ADDRESS_DYCS0, 0xaa55aa55, 1024 * 1024);
-		memset(EMC_ADDRESS_DYCS0, 0x55aa55aa, 1024 * 1024);
-		memset(EMC_ADDRESS_DYCS0, 0xa5, 1024 * 1024);
-		memset(EMC_ADDRESS_DYCS0, 0x5a, 1024 * 1024);
+		//memset(EMC_ADDRESS_DYCS0, 0xff, 1024 * 1024);
+		//memset(EMC_ADDRESS_DYCS0, 0x0, 1024 * 1024);
+		//memset(EMC_ADDRESS_DYCS0, 0xa5, 1024 * 1024);
+		//memset(EMC_ADDRESS_DYCS0, 0x5a, 1024 * 1024);
+		for(i = 100000; i;i--);
 		passed = mem_test_walking0(&test);
+		passed = mem_test_walking1(&test);
+		//SDRAM_Init();
 		passed = mem_test_walking1(&test);
 		passed = mem_test_pattern(&test);
 		test.fail_addr;

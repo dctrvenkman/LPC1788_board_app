@@ -116,17 +116,17 @@ void initDynMem(LPC_EMC_T *pEMC, IP_EMC_DYN_CONFIG_T *Dynamic_Config, uint32_t E
 	}
 	pEMC->DYNAMICREADCONFIG = Dynamic_Config->ReadConfig;	/* Read strategy */
 
-	pEMC->DYNAMICRP         = convertTimmingParam(EMC_Clock, Dynamic_Config->tRP, 1);
-	pEMC->DYNAMICRAS        = convertTimmingParam(EMC_Clock, Dynamic_Config->tRAS, 1);
-	pEMC->DYNAMICSREX       = convertTimmingParam(EMC_Clock, Dynamic_Config->tSREX, 1);
-	pEMC->DYNAMICAPR        = convertTimmingParam(EMC_Clock, Dynamic_Config->tAPR, 1);
+	pEMC->DYNAMICRP         = convertTimmingParam(EMC_Clock, Dynamic_Config->tRP, 0);
+	pEMC->DYNAMICRAS        = convertTimmingParam(EMC_Clock, Dynamic_Config->tRAS, 0);
+	pEMC->DYNAMICSREX       = convertTimmingParam(EMC_Clock, Dynamic_Config->tSREX, 0);
+	pEMC->DYNAMICAPR        = convertTimmingParam(EMC_Clock, Dynamic_Config->tAPR, 0);
 	pEMC->DYNAMICDAL        = convertTimmingParam(EMC_Clock, Dynamic_Config->tDAL, 0);
-	pEMC->DYNAMICWR         = convertTimmingParam(EMC_Clock, Dynamic_Config->tWR, 1);
-	pEMC->DYNAMICRC         = convertTimmingParam(EMC_Clock, Dynamic_Config->tRC, 1);
-	pEMC->DYNAMICRFC        = convertTimmingParam(EMC_Clock, Dynamic_Config->tRFC, 1);
-	pEMC->DYNAMICXSR        = convertTimmingParam(EMC_Clock, Dynamic_Config->tXSR, 1);
-	pEMC->DYNAMICRRD        = convertTimmingParam(EMC_Clock, Dynamic_Config->tRRD, 1);
-	pEMC->DYNAMICMRD        = convertTimmingParam(EMC_Clock, Dynamic_Config->tMRD, 1);
+	pEMC->DYNAMICWR         = convertTimmingParam(EMC_Clock, Dynamic_Config->tWR, 0);
+	pEMC->DYNAMICRC         = convertTimmingParam(EMC_Clock, Dynamic_Config->tRC, 0);
+	pEMC->DYNAMICRFC        = convertTimmingParam(EMC_Clock, Dynamic_Config->tRFC, 0);
+	pEMC->DYNAMICXSR        = convertTimmingParam(EMC_Clock, Dynamic_Config->tXSR, 0);
+	pEMC->DYNAMICRRD        = convertTimmingParam(EMC_Clock, Dynamic_Config->tRRD, 0);
+	pEMC->DYNAMICMRD        = convertTimmingParam(EMC_Clock, Dynamic_Config->tMRD, 0);
 
 	/* TIM_Waitus(100); */
 	/*FIXME: if Timer driver is ready, it should replace below "for" delay technic */

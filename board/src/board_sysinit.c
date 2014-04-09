@@ -154,14 +154,14 @@ STATIC const PINMUX_GRP_T pinmuxing[] = {
 
 /* SDRAM timing and chip Config for AS4C8M16S-7 */
 STATIC const IP_EMC_DYN_CONFIG_T AS4C8M16S_config = {
-	EMC_NANOSECOND(64000000 / 4096), /* 4096 refresh cycles per 64ms */
-	1,					/* Command Delayed */ /* TODO: Check value 1 */
-	3,					/* tRP */
-	7,					/* tRAS */
-	EMC_NANOSECOND(70),	/* tSREX */
+	EMC_NANOSECOND(64000000 / 4096 / 2), /* 4096 refresh cycles per 64ms */
+	1,					/* Command Delayed */
+	EMC_NANOSECOND(21),	/* tRP */
+	EMC_NANOSECOND(42),	/* tRAS */
+	EMC_NANOSECOND(65),	/* tSREX */
 	EMC_CLOCK(1),		/* tAPR */ /* TODO: Check value 1 */
-	EMC_CLOCK(5),		/* tDAL */
-	EMC_NANOSECOND(20),	/* tWR */
+	EMC_CLOCK(8),		/* tDAL */
+	EMC_CLOCK(2),		/* tWR */
 	EMC_NANOSECOND(63),	/* tRC */
 	EMC_NANOSECOND(63),	/* tRFC */ /* TODO: Check value 63 */
 	EMC_NANOSECOND(65),	/* tXSR */
@@ -170,15 +170,14 @@ STATIC const IP_EMC_DYN_CONFIG_T AS4C8M16S_config = {
 	{
 		{
 			EMC_ADDRESS_DYCS0,
-			2,	/* RAS */
+			3,	/* RAS */
 			EMC_DYN_MODE_WBMODE_PROGRAMMED |
 			EMC_DYN_MODE_OPMODE_STANDARD |
 			EMC_DYN_MODE_CAS_3 |
 			EMC_DYN_MODE_BURST_TYPE_SEQUENTIAL |
 			EMC_DYN_MODE_BURST_LEN_4,
-
 			EMC_DYN_CONFIG_DATA_BUS_16 |
-			EMC_DYN_CONFIG_8Mx16_4BANKS_12ROWS_9COLS |
+			EMC_DYN_CONFIG_16Mx16_4BANKS_13ROWS_9COLS | //EMC_DYN_CONFIG_8Mx16_4BANKS_12ROWS_9COLS |
 			EMC_DYN_CONFIG_MD_SDRAM
 		},
 		{0, 0, 0, 0},
@@ -224,10 +223,10 @@ void Board_SetupExtMemory(void)
 	/* Move all clock delays together */
 	LPC_SYSCTL->EMCDLYCTL = (CLK0_DELAY) | (CLK0_DELAY << 8) | (CLK0_DELAY << 16 | (CLK0_DELAY << 24));
 
-	/* Setup EMC Clock Divider for divide by 2 */
-	/* Setup EMC clock for a divider of 2 from CPU clock. Enable EMC clock for
+	/* Setup EMC Clock Divider for divide by 1 */
+	/* Setup EMC clock for a divider of 1 from CPU clock. Enable EMC clock for
 	   external memory setup of DRAM. */
-	Chip_Clock_SetEMCClockDiv(SYSCTL_EMC_DIV2);
+	Chip_Clock_SetEMCClockDiv(SYSCTL_EMC_DIV1);
 	Chip_SYSCTL_PeriphReset(SYSCTL_RESET_EMC);
 
 	/* Init EMC Controller -Enable-LE mode- clock ratio 1:1 */
@@ -245,7 +244,5 @@ void Board_SystemInit(void)
 {
 	Board_SetupMuxing();
 	Board_SetupClocking();
-
-	// Doesn't work as A0 is miswired
 	Board_SetupExtMemory();
 }
