@@ -154,13 +154,13 @@ STATIC const PINMUX_GRP_T pinmuxing[] = {
 
 /* SDRAM timing and chip config for AS4C8M16S-7 */
 STATIC const IP_EMC_DYN_CONFIG_T AS4C8M16S_config = {
-	EMC_NANOSECOND(64000000 / 4096 / 2), /* 4096 refresh cycles per 64ms */
+	EMC_NANOSECOND(64000000 / 4096), /* 4096 refresh cycles per 64ms */
 	1,					/* Command Delayed */
 	EMC_NANOSECOND(21),	/* tRP */
 	EMC_NANOSECOND(42),	/* tRAS */
 	EMC_NANOSECOND(65),	/* tSREX */
 	EMC_CLOCK(1),		/* tAPR */
-	EMC_CLOCK(8),		/* tDAL */
+	EMC_CLOCK(5),		/* tDAL */
 	EMC_CLOCK(2),		/* tWR */
 	EMC_NANOSECOND(63),	/* tRC */
 	EMC_NANOSECOND(63),	/* tRFC */
