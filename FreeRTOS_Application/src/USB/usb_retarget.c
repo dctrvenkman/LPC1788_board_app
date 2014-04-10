@@ -25,9 +25,9 @@ int WRITEFUNC(int iFileHandle, char *pcBuffer, int iLength)
 	int bytesSent = 0;
 	while(bytesSent != iLength)
 		if(iLength - bytesSent > 64)
-			bytesSent += vcom_write(&pcBuffer[bytesSent], 64);
+			bytesSent += vcom_write((uint8_t*)&pcBuffer[bytesSent], 64);
 		else
-			bytesSent += vcom_write(&pcBuffer[bytesSent], iLength - bytesSent);
+			bytesSent += vcom_write((uint8_t*)&pcBuffer[bytesSent], iLength - bytesSent);
 	return bytesSent;
 }
 

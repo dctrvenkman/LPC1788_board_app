@@ -152,28 +152,28 @@ STATIC const PINMUX_GRP_T pinmuxing[] = {
 /* EMC clock delay */
 #define CLK0_DELAY 8
 
-/* SDRAM timing and chip Config for AS4C8M16S-7 */
+/* SDRAM timing and chip config for AS4C8M16S-7 */
 STATIC const IP_EMC_DYN_CONFIG_T AS4C8M16S_config = {
 	EMC_NANOSECOND(64000000 / 4096 / 2), /* 4096 refresh cycles per 64ms */
 	1,					/* Command Delayed */
 	EMC_NANOSECOND(21),	/* tRP */
 	EMC_NANOSECOND(42),	/* tRAS */
 	EMC_NANOSECOND(65),	/* tSREX */
-	EMC_CLOCK(1),		/* tAPR */ /* TODO: Check value 1 */
+	EMC_CLOCK(1),		/* tAPR */
 	EMC_CLOCK(8),		/* tDAL */
 	EMC_CLOCK(2),		/* tWR */
 	EMC_NANOSECOND(63),	/* tRC */
-	EMC_NANOSECOND(63),	/* tRFC */ /* TODO: Check value 63 */
+	EMC_NANOSECOND(63),	/* tRFC */
 	EMC_NANOSECOND(65),	/* tXSR */
 	EMC_NANOSECOND(14),	/* tRRD */
 	EMC_CLOCK(2),		/* tMRD */
 	{
 		{
 			EMC_ADDRESS_DYCS0,
-			3,	/* RAS */
+			2,	/* RAS */
 			EMC_DYN_MODE_WBMODE_PROGRAMMED |
 			EMC_DYN_MODE_OPMODE_STANDARD |
-			EMC_DYN_MODE_CAS_3 |
+			EMC_DYN_MODE_CAS_2 |
 			EMC_DYN_MODE_BURST_TYPE_SEQUENTIAL |
 			EMC_DYN_MODE_BURST_LEN_8,
 			EMC_DYN_CONFIG_DATA_BUS_16 |

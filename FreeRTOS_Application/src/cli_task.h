@@ -8,11 +8,8 @@
 #ifndef __CLI_TASK_H__
 #define __CLI_TASK_H__
 
-#include "FreeRTOS.h"
-#include "semphr.h"
-
 #define PRIORITY_CLI_TASK		1
 
-unsigned long CLITaskInit(SemaphoreHandle_t usb_uart_connected_sem);
+unsigned long CLITaskInit(void);
 
 #endif // __CLI_TASK_H__

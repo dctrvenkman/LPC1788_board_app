@@ -78,10 +78,7 @@
 /* Board definition includes */
 #include "board.h"
 
-/* Task definition includes */
-#include "usb_task.h"
-
-
+#include "usb.h"
 #include "misc_cli_cmds.h"
 #include "cli_task.h"
 #include "sd_disk.h"
@@ -95,15 +92,15 @@ static void prvSetupHardware(void);
 
 /*-----------------------------------------------------------*/
 
-SemaphoreHandle_t usb_uart_connected_sem;
-
 
 static void testTask1(void *pvParameters)
 {
 	while(1)
 	{
-		//sd_test();
-		vTaskDelay(2 * portTICK_PERIOD_MS);
+		int i = 0;
+		for(;i < 100; i++)
+			;
+		vTaskDelay(1000 * portTICK_PERIOD_MS);
 	}
 }
 
@@ -120,17 +117,12 @@ static void testTask2(void *pvParameters)
 
 int main(void)
 {
-	usb_uart_connected_sem = xSemaphoreCreateBinary();
-
 	/* Configure the hardware. */
 	prvSetupHardware();
 
-    /* Create the USB task. */
-	//USBInit(usb_uart_connected_sem);
-    //CLITaskInit(usb_uart_connected_sem);
-
-    xTaskCreate(testTask1, "test1", configMINIMAL_STACK_SIZE * 10, (void *) NULL, tskIDLE_PRIORITY, NULL);
-    xTaskCreate(testTask2, "test2", configMINIMAL_STACK_SIZE, (void *) NULL, tskIDLE_PRIORITY, NULL);
+	CLITaskInit();
+    xTaskCreate(testTask1, "test1", configMINIMAL_STACK_SIZE * 10, (void *) NULL, tskIDLE_PRIORITY + 1, NULL);
+    xTaskCreate(testTask2, "test2", configMINIMAL_STACK_SIZE, (void *) NULL, tskIDLE_PRIORITY + 1, NULL);
 
     //LCDdriver_initialisation();
     //LCD_PrintString(5, 10, "FreeRTOS.org", 14, COLOR_GREEN);
@@ -152,26 +144,13 @@ void vApplicationTickHook(void)
 	of this file. */
 }
 
-
-#include "mem_tests.h"
 void prvSetupHardware(void)
 {
 	Board_Init();
 
-#if 1
-	{
-		uint32_t* fail_addr;
-		uint32_t is_val, ex_val;
-		MEM_TEST_SETUP_T test = { EMC_ADDRESS_DYCS0, 16 * 1024 * 1024, fail_addr, is_val, ex_val };
-		bool passed = false;
-
-		passed = mem_test_walking0(&test);
-		passed = mem_test_walking1(&test);
-		passed = mem_test_pattern(&test);
-		while(1)
-			;
-	}
-#endif
+	/* Initialize USB device */
+	/* NOTE: because of retarget, printf cannot be used before this call */
+	USBInit();
 }
 
 void vApplicationStackOverflowHook(xTaskHandle pxTask, char *pcTaskName)

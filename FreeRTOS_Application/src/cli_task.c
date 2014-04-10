@@ -17,8 +17,8 @@
 #include "cdc_vcom.h"
 
 #define CLITASKSTACKSIZE	512 // Stack size in words
-#define MAX_INPUT_LENGTH    50
-#define MAX_OUTPUT_LENGTH   100
+#define MAX_INPUT_LENGTH    (64)
+#define MAX_OUTPUT_LENGTH   (512)
 static const char* pcWelcomeMessage = "FreeRTOS command server.\r\nType \'help\' to view a list of registered commands.\r\n";
 static const char* pcPrompt = ">";
 
@@ -27,13 +27,15 @@ static void CLITask(void *pvParameters)
 	unsigned char cRxedChar;
 	unsigned char cInputIndex = 0;
 	portBASE_TYPE xMoreDataToFollow;
+
 	/* The input and output buffers are declared static to keep them off the stack. */
-	static int8_t pcOutputString[MAX_OUTPUT_LENGTH];
-	static int8_t pcInputString[MAX_INPUT_LENGTH];
-	SemaphoreHandle_t usb_uart_connected_sem = (SemaphoreHandle_t)pvParameters;
+	static char pcOutputString[MAX_OUTPUT_LENGTH];
+	static char pcInputString[MAX_INPUT_LENGTH];
+
+	SemaphoreHandle_t usb_connected_sem = vcom_get_connected_sem();
 
 	/* Wait for user to open the USB serial port */
-	xSemaphoreTake(usb_uart_connected_sem, portMAX_DELAY);
+	xSemaphoreTake(usb_connected_sem, portMAX_DELAY);
 
 	/* Send a welcome message to the user knows they are connected. */
     printf(pcWelcomeMessage);
@@ -108,9 +110,9 @@ static void CLITask(void *pvParameters)
 	}
 }
 
-unsigned long CLITaskInit(SemaphoreHandle_t usb_uart_connected_sem)
+unsigned long CLITaskInit(void)
 {
-    if(xTaskCreate(CLITask, (signed portCHAR *)"CLI", CLITASKSTACKSIZE, (void*)usb_uart_connected_sem, tskIDLE_PRIORITY + PRIORITY_CLI_TASK, NULL) != pdTRUE)
+    if(xTaskCreate(CLITask, "CLI", CLITASKSTACKSIZE, 0, tskIDLE_PRIORITY + PRIORITY_CLI_TASK, NULL) != pdTRUE)
         return(1);
     return(0);
 }

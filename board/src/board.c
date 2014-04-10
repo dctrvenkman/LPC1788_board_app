@@ -282,7 +282,7 @@ void Serial_CreateStream(void *Stream)
 void Board_USBD_Init(void)
 {
 	LPC_USB->USBClkCtrl = 0x1A; /* Dev, AHB clock enable */
-	while ((LPC_USB->USBClkSt & 0x1A) != 0x1A)
+	while((LPC_USB->USBClkSt & 0x1A) != 0x1A)
 		;
 	/* Port Select register when USB device is configured. */
 	LPC_USB->StCtrl = 0x3;

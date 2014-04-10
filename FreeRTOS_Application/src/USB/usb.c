@@ -5,16 +5,13 @@
  *      Author: RMamone
  */
 
+#include "usb.h"
 #include "board.h"
 #include <stdio.h>
 #include <string.h>
 #include "app_usbd_cfg.h"
 #include "cdc_vcom.h"
 #include "stopwatch.h"
-
-#include "FreeRTOS.h"
-#include "task.h"
-#include "semphr.h"
 
 /*****************************************************************************
  * Private types/enumerations/variables
@@ -89,7 +86,7 @@ USB_INTERFACE_DESCRIPTOR *find_IntfDesc(const uint8_t *pDesc, uint32_t intfClass
 	return pIntfDesc;
 }
 
-void USBInit(SemaphoreHandle_t usb_uart_connected_sem)
+void USBInit(void)
 {
 	USBD_API_INIT_PARAM_T usb_param;
 	USB_CORE_DESCS_T desc;
@@ -130,10 +127,4 @@ void USBInit(SemaphoreHandle_t usb_uart_connected_sem)
 			USBD_API->hw->Connect(g_hUsb, 1);
 		}
 	}
-
-	/* Check if host has connected and opened the VCOM port */
-	while(!vcom_connected())
-		;
-
-	xSemaphoreGive(usb_uart_connected_sem);
 }

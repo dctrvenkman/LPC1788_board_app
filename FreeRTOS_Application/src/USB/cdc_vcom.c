@@ -37,6 +37,9 @@
  * Private types/enumerations/variables
  ****************************************************************************/
 
+/* USB Device connected semaphore */
+static SemaphoreHandle_t connectedSem = 0;
+
 /*****************************************************************************
  * Public types/enumerations/variables
  ****************************************************************************/
@@ -111,12 +114,21 @@ static ErrorCode_t VCOM_SetLineCode(USBD_HANDLE_T hCDC, CDC_LINE_CODING *line_co
 	/* Called when baud rate is changed/set. Using it to know host connection state */
 	pVcom->tx_flags = VCOM_TX_CONNECTED;	/* reset other flags */
 
+	/* Give the connected semaphore to notify USB device connected */
+	xSemaphoreGive(connectedSem);
+
 	return LPC_OK;
 }
 
 /*****************************************************************************
  * Public functions
  ****************************************************************************/
+
+/* Returns VCOM connected semaphore */
+SemaphoreHandle_t vcom_get_connected_sem(void)
+{
+	return connectedSem;
+}
 
 /* Virtual com port init routine */
 ErrorCode_t vcom_init(USBD_HANDLE_T hUsb, USB_CORE_DESCS_T *pDesc, USBD_API_INIT_PARAM_T *pUsbParam)
@@ -156,6 +168,9 @@ ErrorCode_t vcom_init(USBD_HANDLE_T hUsb, USB_CORE_DESCS_T *pDesc, USBD_API_INIT
 		pUsbParam->mem_base = cdc_param.mem_base;
 		pUsbParam->mem_size = cdc_param.mem_size;
 	}
+
+	/* Create new semaphore */
+	connectedSem = xSemaphoreCreateBinary();
 
 	return ret;
 }
