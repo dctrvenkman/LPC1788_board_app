@@ -153,144 +153,6 @@ void vApplicationTickHook(void)
 }
 
 
-
-#define SDRAM_SIZE 0x04000000
-unsigned int SDRAM_BASE_ADDR = 0xa0000000;
-
-#define SDRAM_PERIOD          8.3	// 120MHz
-//#define SDRAM_PERIOD          16.7  // 60MHz
-
-#define P2C(Period)           (((Period<SDRAM_PERIOD)?0:(unsigned int)((float)Period/SDRAM_PERIOD))+1)
-
-#if 0
-#define SDRAM_REFRESH         7813
-#define SDRAM_TRP             20
-#define SDRAM_TRAS            45
-#define SDRAM_TAPR            1
-#define SDRAM_TDAL            3
-#define SDRAM_TWR             3
-#define SDRAM_TRC             65
-#define SDRAM_TRFC            66
-#define SDRAM_TXSR            67
-#define SDRAM_TRRD            15
-#define SDRAM_TMRD            3
-#else
-#define SDRAM_REFRESH         7829
-#define SDRAM_TRP             21
-#define SDRAM_TRAS            42
-#define SDRAM_TAPR            1
-#define SDRAM_TDAL            5
-#define SDRAM_TWR             2
-#define SDRAM_TRC             63
-#define SDRAM_TRFC            63
-#define SDRAM_TXSR            65
-#define SDRAM_TRRD            14
-#define SDRAM_TMRD            2
-#endif
-
-
-/*************************************************************************
- * Function Name: SDRAM_Init
- * Parameters: none
- *
- * Return: none
- *
- * Description: SDRAM controller and memory init
- *
- *************************************************************************/
-void SDRAM_Init (void)
-{
-  volatile unsigned int i;
-
-  /* Enable EMC clock*/
-  LPC_SYSCTL->PCON |= (1<<11);// PCONP_bit.PCEMC = 1;
-  /*The EMC uses the same clock as the CPU*/
-  LPC_SYSCTL->EMCCLKSEL = 0;// EMCCLKSEL = 0;
-
-  /*Init SDRAM controller*/
-  // EMCDLYCTL_bit.CMDDLY = 0x8;
-  /*Set data read delay*/
-  // EMCDLYCTL_bit.FBCLKDLY = 0x8;
-  /**/
-  //EMCDLYCTL_bit.CLKOUT0DLY = 0x8;
-  LPC_SYSCTL->EMCDLYCTL = 0x00080808;
-
-
-  LPC_EMC->CONTROL = 1; //EMCControl      = 1;         // enable EMC
-  LPC_EMC->DYNAMICREADCONFIG = 1; //EMCDynamicReadConfig = 1;
-  //EMCDynamicRasCas0_bit.CAS = 3;
-  //EMCDynamicRasCas0_bit.RAS = 3;
-  LPC_EMC->DYNAMICRASCAS0 = 0x303;
-  LPC_EMC->DYNAMICRP = P2C(SDRAM_TRP); //EMCDynamictRP = P2C(SDRAM_TRP);
-  LPC_EMC->DYNAMICRAS = P2C(SDRAM_TRAS); //EMCDynamictRAS = P2C(SDRAM_TRAS);
-  LPC_EMC->DYNAMICSREX = P2C(SDRAM_TXSR); //EMCDynamictSREX = P2C(SDRAM_TXSR);
-  LPC_EMC->DYNAMICAPR = SDRAM_TAPR; //EMCDynamictAPR = SDRAM_TAPR;
-  LPC_EMC->DYNAMICDAL = SDRAM_TDAL+P2C(SDRAM_TRP); //EMCDynamictDAL = SDRAM_TDAL+P2C(SDRAM_TRP);
-  LPC_EMC->DYNAMICWR = SDRAM_TWR; //EMCDynamictWR = SDRAM_TWR;
-  LPC_EMC->DYNAMICRC = P2C(SDRAM_TRC); //EMCDynamictRC = P2C(SDRAM_TRC);
-  LPC_EMC->DYNAMICRFC = P2C(SDRAM_TRFC); //EMCDynamictRFC = P2C(SDRAM_TRFC);
-  LPC_EMC->DYNAMICXSR = P2C(SDRAM_TXSR); //EMCDynamictXSR = P2C(SDRAM_TXSR);
-  LPC_EMC->DYNAMICRRD = P2C(SDRAM_TRRD); //EMCDynamictRRD = P2C(SDRAM_TRRD);
-  LPC_EMC->DYNAMICMRD = SDRAM_TMRD; //EMCDynamictMRD = SDRAM_TMRD;
-
-  LPC_EMC->DYNAMICCONFIG0 = 0x0000680; //EMCDynamicConfig0 = 0x0000680;        // 13 row, 9 - col, SDRAM, 16 bit data bus
-
-  // JEDEC General SDRAM Initialization Sequence
-  // DELAY to allow power and clocks to stabilize ~100 us
-  // NOP
-  LPC_EMC->DYNAMICCONTROL = 0x0183; //EMCDynamicControl = 0x0183;
-  for(i = 200*30; i;i--);
-  // PALL
-  LPC_EMC->DYNAMICCONTROL = 0x0103; //EMCDynamicControl_bit.I = 2;
-  LPC_EMC->DYNAMICREFRESH = 1; //EMCDynamicRefresh = 1;
-  for(i= 256; i; --i); // > 128 clk
-  LPC_EMC->DYNAMICREFRESH = P2C(SDRAM_REFRESH) >> 4; //EMCDynamicRefresh = P2C(SDRAM_REFRESH) >> 4;
-  // COMM
-  LPC_EMC->DYNAMICCONTROL = 0x0083; //EMCDynamicControl_bit.I = 1;
-  // Burst 4, Sequential, CAS-3
-  //volatile unsigned int Dummy = *(volatile unsigned int *)((unsigned int)&SDRAM_BASE_ADDR + (0x33UL << (12)));
-  i = *(volatile unsigned int *)(SDRAM_BASE_ADDR + (0x33UL << 12));
-  // NORM
-  LPC_EMC->DYNAMICCONTROL = 0; //EMCDynamicControl = 0x0000;
-  LPC_EMC->DYNAMICCONFIG0 |= 1 << 19;; //EMCDynamicConfig0_bit.B = 1;
-  for(i = 100000; i;i--);
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #include "mem_tests.h"
 void prvSetupHardware(void)
 {
@@ -298,22 +160,14 @@ void prvSetupHardware(void)
 
 #if 1
 	{
-		volatile int i;
 		uint32_t* fail_addr;
 		uint32_t is_val, ex_val;
-		MEM_TEST_SETUP_T test = {EMC_ADDRESS_DYCS0, 16 * 1024 * 1024, fail_addr, is_val, ex_val};
+		MEM_TEST_SETUP_T test = { EMC_ADDRESS_DYCS0, 16 * 1024 * 1024, fail_addr, is_val, ex_val };
 		bool passed = false;
-		//memset(EMC_ADDRESS_DYCS0, 0xff, 1024 * 1024);
-		//memset(EMC_ADDRESS_DYCS0, 0x0, 1024 * 1024);
-		//memset(EMC_ADDRESS_DYCS0, 0xa5, 1024 * 1024);
-		//memset(EMC_ADDRESS_DYCS0, 0x5a, 1024 * 1024);
-		for(i = 100000; i;i--);
+
 		passed = mem_test_walking0(&test);
 		passed = mem_test_walking1(&test);
-		//SDRAM_Init();
-		passed = mem_test_walking1(&test);
 		passed = mem_test_pattern(&test);
-		test.fail_addr;
 		while(1)
 			;
 	}

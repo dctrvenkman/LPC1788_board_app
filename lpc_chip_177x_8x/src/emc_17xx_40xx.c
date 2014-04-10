@@ -90,10 +90,10 @@ STATIC uint32_t getColsLen(uint32_t DynConfig)
 		return 8;
 	}
 	else if (DevBusWidth == 1) {
-		return ((DynConfig >> (EMC_DYN_CONFIG_DEV_SIZE_BIT + 1)) & 0x03) + 8;
+		return ((DynConfig >> (EMC_DYN_CONFIG_DEV_SIZE_BIT)) & 0x03) + 8;
 	}
 	else if (DevBusWidth == 0) {
-		return ((DynConfig >> (EMC_DYN_CONFIG_DEV_SIZE_BIT + 1)) & 0x03) + 9;
+		return ((DynConfig >> (EMC_DYN_CONFIG_DEV_SIZE_BIT)) & 0x03) + 9;
 	}
 
 	return 0;
@@ -169,7 +169,7 @@ void initDynMem(LPC_EMC_T *pEMC, IP_EMC_DYN_CONFIG_T *Dynamic_Config, uint32_t E
 		DynAddr = Dynamic_Config->DevConfig[ChipSelect].BaseAddr;
 
 		if (DynAddr != 0) {
-			volatile uint32_t temp;
+			uint32_t temp;
 			uint32_t ModeRegister;
 			ModeRegister = Dynamic_Config->DevConfig[ChipSelect].ModeRegister;
 			temp = *((volatile uint32_t *) (DynAddr | (ModeRegister << Col_len)));
