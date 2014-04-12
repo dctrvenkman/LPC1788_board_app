@@ -82,6 +82,7 @@
 #include "misc_cli_cmds.h"
 #include "cli_task.h"
 #include "sd_disk.h"
+#include "ff.h"
 
 /*-----------------------------------------------------------*/
 
@@ -95,11 +96,20 @@ static void prvSetupHardware(void);
 
 static void testTask1(void *pvParameters)
 {
-	while(1)
+	FRESULT rc;
+	FATFS fatFS;
+	FIL fileObj;
+	char buffer[256];
+	UINT bytesRead;
+
+	f_mount(0, &fatFS);
+	rc = f_open(&fileObj, "MESSAGE.TXT", FA_READ);
+	if(!rc)
+		rc = f_read(&fileObj, buffer, sizeof(buffer), &bytesRead);
+	rc = f_close(&fileObj);
+
+while(1)
 	{
-		int i = 0;
-		for(;i < 100; i++)
-			;
 		vTaskDelay(1000 * portTICK_PERIOD_MS);
 	}
 }

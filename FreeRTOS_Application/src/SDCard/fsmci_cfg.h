@@ -65,7 +65,7 @@ typedef SDMMC_CARD_T CARD_HANDLE_T;
  * assigned by this function will be passed to all SD card adapter
  * functions.
  */
-#define FSMCI_CardInit()               (&sdCardInfo)
+#define FSMCI_CardInit()               SDCardInit()
 
 /**
  * @def		FSMCI_CardGetSectorCnt(hc)

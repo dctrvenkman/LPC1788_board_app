@@ -26,9 +26,27 @@
 // TO A CURRENT END USER LICENSE AGREEMENT (COMMERCIAL OR EDUCATIONAL) WITH
 // CODE RED TECHNOLOGIES LTD. 
 
-#include "NXP/LPC17xx/LPC17xx.h"
 #include "lcd_driver.h"
 #include "lcd_commands.h"
+
+#define FIO0DIR        (*((volatile unsigned long *) 0x2009C000))
+#define FIO1DIR        (*((volatile unsigned long *) 0x2009C020))
+#define FIO2DIR        (*((volatile unsigned long *) 0x2009C040))
+#define FIO3DIR        (*((volatile unsigned long *) 0x2009C060))
+#define FIO4DIR        (*((volatile unsigned long *) 0x2009C080))
+
+#define FIO0SET        (*((volatile unsigned long *) 0x2009C018))
+#define FIO1SET        (*((volatile unsigned long *) 0x2009C038))
+#define FIO2SET        (*((volatile unsigned long *) 0x2009C058))
+#define FIO3SET        (*((volatile unsigned long *) 0x2009C078))
+#define FIO4SET        (*((volatile unsigned long *) 0x2009C098))
+
+#define FIO0CLR        (*((volatile unsigned long *) 0x2009C01C))
+#define FIO1CLR        (*((volatile unsigned long *) 0x2009C03C))
+#define FIO2CLR        (*((volatile unsigned long *) 0x2009C05C))
+#define FIO3CLR        (*((volatile unsigned long *) 0x2009C07C))
+#define FIO4CLR        (*((volatile unsigned long *) 0x2009C09C))
+
 
 // Bits within GPIO port 2 used for LCD driver
 #define LCD_CSB_PIN            (1<<13)
