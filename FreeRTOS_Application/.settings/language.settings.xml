@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project>
+	<configuration id="com.crt.advproject.config.exe.debug.358435974" name="Debug"/>
 	<configuration id="com.crt.advproject.config.exe.release.429003282" name="Release">
 		<extension point="org.eclipse.cdt.core.LanguageSettingsProvider">
 			<provider copy-of="extension" id="org.eclipse.cdt.ui.UserLanguageSettingsProvider"/>

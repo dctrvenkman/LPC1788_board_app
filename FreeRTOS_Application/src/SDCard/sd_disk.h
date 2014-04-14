@@ -10,7 +10,7 @@
 
 #include "chip.h"
 
-SDMMC_CARD_T SDCardInit(void);
+SDMMC_CARD_T* SDCardInit(void);
 
 void sd_test(void);
 
