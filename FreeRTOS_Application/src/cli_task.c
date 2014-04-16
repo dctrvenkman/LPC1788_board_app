@@ -6,17 +6,21 @@
  */
 
 #include "cli_task.h"
+
+#include <string.h>
+#include <stdio.h>
+
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
 #include "semphr.h"
 #include "FreeRTOS_CLI.h"
-#include <string.h>
-#include <stdio.h>
+
+#include "cliParser.h"
 
 #include "cdc_vcom.h"
 
-#define CLITASKSTACKSIZE	512 // Stack size in words
+#define CLITASKSTACKSIZE	(2 * 1024) // Stack size in words
 #define MAX_INPUT_LENGTH    (64)
 #define MAX_OUTPUT_LENGTH   (512)
 static const char* pcWelcomeMessage = "FreeRTOS command server.\r\nType \'help\' to view a list of registered commands.\r\n";
@@ -37,6 +41,7 @@ static void CLITask(void *pvParameters)
 	/* Wait for user to open the USB serial port */
 	xSemaphoreTake(usb_connected_sem, portMAX_DELAY);
 
+#ifdef FREERTOS_CLI
 	/* Send a welcome message to the user knows they are connected. */
     printf(pcWelcomeMessage);
     printf(pcPrompt);
@@ -108,6 +113,10 @@ static void CLITask(void *pvParameters)
 			}
 		}
 	}
+#else
+	cliInit();
+	cliRunLoop();
+#endif
 }
 
 unsigned long CLITaskInit(void)
