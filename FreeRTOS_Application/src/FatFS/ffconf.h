@@ -110,14 +110,14 @@
 /  enable LFN feature and set _LFN_UNICODE to 1. */
 
 
-#define _FS_RPATH		0	/* 0 to 2 */
+#define _FS_RPATH		2	/* 0 to 2 */
 /* The _FS_RPATH option configures relative path feature.
 /
 /   0: Disable relative path feature and remove related functions.
 /   1: Enable relative path. f_chdrive() and f_chdir() are available.
 /   2: f_getcwd() is available in addition to 1.
 /
-/  Note that output of the f_readdir fnction is affected by this option. */
+/  Note that output of the f_readdir function is affected by this option. */
 
 
 
@@ -139,7 +139,7 @@
 
 #define	_MULTI_PARTITION	0	/* 0:Single partition, 1/2:Enable multiple partition */
 /* When set to 0, each volume is bound to the same physical drive number and
-/ it can mount only first primaly partition. When it is set to 1, each volume
+/ it can mount only first primary partition. When it is set to 1, each volume
 / is tied to the partitions listed in VolToPart[]. */
 
 

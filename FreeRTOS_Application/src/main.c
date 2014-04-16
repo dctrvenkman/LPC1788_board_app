@@ -96,34 +96,10 @@ static void prvSetupHardware(void);
 
 static void testTask1(void *pvParameters)
 {
-#if 0
-	FRESULT rc;
-	FATFS fatFS;
-	FIL fileObj;
-	char buffer[256];
-	UINT bytesRead;
-
-	f_mount(0, &fatFS);
-
-	while(1)
-	{
-		//rc = f_mkfs(0, 0, 0);
-
-		rc = f_open(&fileObj, "MESSAGE.TXT", FA_READ);
-		if(!rc)
-		{
-			rc = f_read(&fileObj, buffer, sizeof(buffer), &bytesRead);
-			rc = f_close(&fileObj);
-		}
-
-		vTaskDelay(1000 * portTICK_PERIOD_MS);
-	}
-#else
 	while(1)
 	{
 		vTaskDelay(1000 * portTICK_PERIOD_MS);
 	}
-#endif
 }
 
 static void testTask2(void *pvParameters)
