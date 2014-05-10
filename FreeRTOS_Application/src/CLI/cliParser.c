@@ -52,6 +52,33 @@ cliReturn_t cliRegisterCmd(const char* name, cliCmdCbk_t callback, cliParams_t* 
     return retVal;
 }
 
+void convertParam(char* paramStr, cliParamType_t type, void* paramVal)
+{
+	switch(type)
+	{
+		case CLI_PARAM_TYPE_UCHAR:
+		case CLI_PARAM_TYPE_SCHAR:
+			sscanf(paramStr, "%c", paramVal);
+			break;
+		case CLI_PARAM_TYPE_UINT:
+		case CLI_PARAM_TYPE_SINT:
+			sscanf(paramStr, "%d", paramVal);
+			break;
+		case CLI_PARAM_TYPE_ULONG:
+		case CLI_PARAM_TYPE_SLONG:
+			sscanf(paramStr, "%lf", paramVal);
+			break;
+		case CLI_PARAM_TYPE_FLOAT:
+			sscanf(paramStr, "%f", paramVal);
+			break;
+		case CLI_PARAM_TYPE_POINTER:
+			sscanf(paramStr, "%x", paramVal);
+			break;
+		default:
+			break;
+	}
+}
+
 cliReturn_t cliParseInputChar(char c)
 {
     cliReturn_t retVal = CLI_RETURN_STILL_PARSING;
@@ -136,21 +163,24 @@ cliReturn_t cliParseInputChar(char c)
                 }
                 else
                 {
-                    /* Command found at index i in cmd list */
+                    /* Command found at index currCmdIdx in cmd list */
                     if(cmds[currCmdIdx].params)
                     {
+                    	char* paramStr;
                     	void* params[cmds[currCmdIdx].params->numParams];
                     	unsigned char i;
 
 						/* Tokenize the command name moving the ptr to the first param */
-						params[0] = strtok(buffer, " (,");
+						paramStr = strtok(buffer, " (,");
 
 						for(i = 0; i < cmds[currCmdIdx].params->numParams; i++)
 						{
-							char* currTok = params[i] = strtok(NULL, CLI_CMD_DELIMITERS);
+							char* paramStr = strtok(NULL, CLI_CMD_DELIMITERS);
 
-							if(0 == currTok)
+							if(0 == paramStr)
 								retVal = CLI_RETURN_TOO_FEW_PARAMS;
+							else
+								convertParam(paramStr, cmds[currCmdIdx].params->params->type, &params[i]);
 						}
 
 						/* Check for extra params - not needed */
@@ -164,7 +194,7 @@ cliReturn_t cliParseInputChar(char c)
 							retVal = CLI_RETURN_CMD_EXECUTED;
 						}
                     }
-                    else
+                    else /* No parameters supplied */
                     {
                     	if(CLI_RETURN_STILL_PARSING == retVal)
 						{
@@ -230,8 +260,15 @@ void clsCmdCbk(unsigned int numParams, void** params)
     printf("\x1b[H"); // Home cursor
 }
 
-void testCbk(unsigned int numParams, ...)
+cliParam_t testParam[] = { { "par", CLI_PARAM_TYPE_UINT } };
+cliParams_t testParams = { 1, &testParam};
+
+void testCbk(unsigned int numParams, void** params)
 {
+	unsigned char* test = &params[0];
+	printf("%d\n\r", *test);
+
+#if 0
 	va_list vl;
 	int i, val;
 
@@ -241,6 +278,7 @@ void testCbk(unsigned int numParams, ...)
 		val = va_arg(vl, int);
 	}
 	va_end(vl);
+#endif
 }
 
 
@@ -248,6 +286,7 @@ void cliInit(void)
 {
 	cliRegisterCmd("help", helpCmdCbk, 0);
 	cliRegisterCmd("cls", clsCmdCbk, 0);
+	cliRegisterCmd("test", testCbk, &testParams);
 }
 
 void cliRunLoop(void)
