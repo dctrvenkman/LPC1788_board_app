@@ -9,7 +9,7 @@
 #define CLIPARSER_H_
 
 #define CLI_PARSER_BUFFER_SIZE  32
-#define CLI_MAX_PARAM_COUNT     5
+#define CLI_MAX_PARAM_COUNT     10
 #define CLI_MAX_CMD_COUNT       32
 #define CLI_TERM_CHARACTER      '\r'
 #define CLI_DEFAULT_PROMPT      '>'
@@ -44,13 +44,17 @@ typedef enum
 
 typedef struct
 {
+	/* String description of parameter */
     const char* name;
+    /* Parameter type */
     cliParamType_t type;
 }cliParam_t;
 
 typedef struct
 {
+	/* Number of parameters in params array */
 	unsigned int numParams;
+	/* Array of parameters */
 	cliParam_t* params;
 }cliParams_t;
 

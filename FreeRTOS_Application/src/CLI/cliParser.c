@@ -12,7 +12,7 @@
 #include <stdarg.h>
 #include <string.h>
 
-#define CLI_CMD_DELIMITERS      " (),"
+#define CLI_CMD_DELIMITERS      " (),\r\n"
 
 typedef cliCmdCbk cliCmdCbk_t;
 
@@ -130,18 +130,22 @@ cliReturn_t cliParseInputChar(char c)
     }
     else //if((0x20 >= c) || (c <= 0x7E) || (0x0d == c) || (0x0a == c)) // printable ascii character or return
     {
-        putchar(c); // echo back character
-        buffer[bufferIdx] = c; // store character in buffer
+        if(CLI_PARSER_BUFFER_SIZE - 1 > bufferIdx) /* Space available in receive buffer? */
+        {
+        	putchar(c); // echo back character
+        	buffer[bufferIdx] = c; // store character in buffer
+        	bufferCnt++;
+        	bufferIdx++;
+        }
 
-        /* Check for terminating character or if buffer is full */
-        if((CLI_TERM_CHARACTER == c) || (CLI_PARSER_BUFFER_SIZE == bufferIdx))
+        if(CLI_TERM_CHARACTER == c) /* Terminating character */
         {
             unsigned char currCmdIdx = 0;
 
             /* Replace terminating character with null in order
              * to properly terminate c string */
             buffer[bufferIdx] = '\0';
-            putchar('\n'); // start running command on next line
+            printf("\r\n"); // Terminate current command line
 
             if(0 == bufferIdx)
             {
@@ -175,12 +179,12 @@ cliReturn_t cliParseInputChar(char c)
 
 						for(i = 0; i < cmds[currCmdIdx].params->numParams; i++)
 						{
-							char* paramStr = strtok(NULL, CLI_CMD_DELIMITERS);
+							paramStr = strtok(NULL, CLI_CMD_DELIMITERS);
 
 							if(0 == paramStr)
 								retVal = CLI_RETURN_TOO_FEW_PARAMS;
 							else
-								convertParam(paramStr, cmds[currCmdIdx].params->params->type, &params[i]);
+								convertParam(paramStr, cmds[currCmdIdx].params->params[i].type, &params[i]);
 						}
 
 						/* Check for extra params - not needed */
@@ -209,17 +213,12 @@ cliReturn_t cliParseInputChar(char c)
                 state = 0;
             }
         }
-        else
-        {
-            bufferCnt++;
-            bufferIdx++;
-        }
     }
     return retVal;
 }
 
 /* Must match cliParamType_t enum */
-const static char* paramDescrString[] = {"none",
+static const char* paramDescrString[] = {"none",
                                          "unsigned char",
                                          "char",
                                          "unsigned int",
@@ -238,8 +237,8 @@ void helpCmdCbk(unsigned int numParams, void** params)
 
     for(i = 0; i < cmdCount; i++)
     {
-        int j;
-        printf("%s(", cmds[i].name);
+    	unsigned int j;
+    	printf("%s(", cmds[i].name);
         if(cmds[i].params)
         {
 			for(j = 0; j < cmds[i].params->numParams; j++)
@@ -260,13 +259,30 @@ void clsCmdCbk(unsigned int numParams, void** params)
     printf("\x1b[H"); // Home cursor
 }
 
-cliParam_t testParam[] = { { "par", CLI_PARAM_TYPE_UINT } };
-cliParams_t testParams = { 1, &testParam};
+cliParam_t testParam[] = {
+	{ "p1", CLI_PARAM_TYPE_UCHAR },
+	{ "p2", CLI_PARAM_TYPE_SCHAR },
+	{ "p3", CLI_PARAM_TYPE_UINT },
+	{ "p4", CLI_PARAM_TYPE_SINT },
+	{ "p5", CLI_PARAM_TYPE_ULONG },
+	{ "p6", CLI_PARAM_TYPE_SLONG },
+	{ "p7", CLI_PARAM_TYPE_FLOAT },
+	{ "p8", CLI_PARAM_TYPE_POINTER }};
+cliParams_t testParams = { 8, testParam };
+//cliParams_t testParams = { 1, { "p1", CLI_PARAM_TYPE_UINT }};
 
 void testCbk(unsigned int numParams, void** params)
 {
-	unsigned char* test = &params[0];
-	printf("%d\n\r", *test);
+	unsigned char* p1 = &params[0];
+	char* p2 = &params[1];
+	unsigned int* p3 = &params[2];
+	int* p4 = &params[3];
+	unsigned long* p5 = &params[4];
+	long* p6 = &params[5];
+	float* p7 = &params[6];
+	void* p8 = &params[7];
+
+	printf("%d %d %d %d %l %l %f %x\n\r", *p1, *p2, *p3, *p4, *p5, *p6, *p7, p8);
 
 #if 0
 	va_list vl;
@@ -306,6 +322,9 @@ void cliRunLoop(void)
 				break;
 			case CLI_RETURN_TOO_MANY_PARAMS:
 				printf("Too many parameters\r\n");
+				break;
+			default:
+				break;
 		}
 
 		if(CLI_RETURN_STILL_PARSING != ret)
