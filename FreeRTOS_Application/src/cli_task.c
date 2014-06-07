@@ -6,18 +6,14 @@
  */
 
 #include "cli_task.h"
-
 #include <string.h>
 #include <stdio.h>
-
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
 #include "semphr.h"
 #include "FreeRTOS_CLI.h"
-
 #include "cliParser.h"
-
 #include "cdc_vcom.h"
 
 #define CLITASKSTACKSIZE	(2 * 1024) // Stack size in words

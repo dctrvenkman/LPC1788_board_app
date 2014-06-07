@@ -20,9 +20,9 @@ const LCD_CONFIG_T NHD_43_480x272 = {
 	2,		/* Horizontal front porch in clocks */
 	41,		/* HSYNC pulse width in clocks */
 	480,	/* Pixels per line */
-	1050/*2*/,	/* Vertical back porch in clocks */
-	1050/*2*/,	/* Vertical front porch in clocks */
-	5250/*10*/,	/* VSYNC pulse width in clocks */
+	2,		/* Vertical back porch in clocks */
+	2,		/* Vertical front porch in clocks */
+	10,		/* VSYNC pulse width in clocks */
 	272,	/* Lines per panel */
 	0,		/* Invert output enable, 1 = invert */
 	1,		/* Invert panel clock, 1 = invert */
@@ -46,7 +46,7 @@ const uint32_t RTCOscRateIn = 0;
 /*****************************************************************************
  * Private functions
  ****************************************************************************/
-
+#if 0
 /* Very simple (inaccurate) delay function */
 static void delay(uint32_t i)
 {
@@ -58,6 +58,7 @@ static void delayMs(uint32_t ms)
 {
 	delay(ms * 40000);
 }
+#endif
 
 /*****************************************************************************
  * Public functions

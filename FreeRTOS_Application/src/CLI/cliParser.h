@@ -50,20 +50,12 @@ typedef struct
     cliParamType_t type;
 }cliParam_t;
 
-typedef struct
-{
-	/* Number of parameters in params array */
-	unsigned int numParams;
-	/* Array of parameters */
-	cliParam_t* params;
-}cliParams_t;
-
 /* Prototype for cli command callback */
 typedef void (*cliCmdCbk)(unsigned int numParams, void** params);
 
 void cliInit(void);
 void cliRunLoop(void);
 cliReturn_t cliParseInputChar(char c);
-cliReturn_t cliRegisterCmd(const char* name, cliCmdCbk callback, cliParams_t* params);
+cliReturn_t cliRegisterCmd(const char* name, cliCmdCbk callback, unsigned int numParams, cliParam_t* params);
 
 #endif /* CLIPARSER_H_ */
