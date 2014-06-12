@@ -116,6 +116,13 @@ void QEI_IRQHandler(void) ALIAS(IntDefaultHandler);
 void PLL1_IRQHandler(void) ALIAS(IntDefaultHandler);
 void USBActivity_IRQHandler(void) ALIAS(IntDefaultHandler);
 void CANActivity_IRQHandler(void) ALIAS(IntDefaultHandler);
+void UART4_IRQHandler(void) ALIAS(IntDefaultHandler);
+void SSP2_IRQHandler(void) ALIAS(IntDefaultHandler);
+void LCD_IRQHandler(void) ALIAS(IntDefaultHandler);
+void GPIO_IRQHandler(void) ALIAS(IntDefaultHandler);
+void PWM0_IRQHandler(void) ALIAS(IntDefaultHandler);
+void EEPROM_IRQHandler(void) ALIAS(IntDefaultHandler);
+
 
 extern void xPortSysTickHandler(void);
 extern void xPortPendSVHandler(void);
@@ -208,6 +215,13 @@ void (* const g_pfnVectors[])(void) =
 	PLL1_IRQHandler,						// 48, 0xc0 - PLL1 (USB PLL)
 	USBActivity_IRQHandler,					// 49, 0xc4 - USB Activity interrupt to wakeup
 	CANActivity_IRQHandler, 				// 50, 0xc8 - CAN Activity interrupt to wakeup
+	UART4_IRQHandler,						// 51, 0xcc - UART4
+	SSP2_IRQHandler,						// 52, 0xd0 - SSP2
+	LCD_IRQHandler,							// 53, 0xd4 - LCD Controller
+	GPIO_IRQHandler,						// 54, 0xd8 - GPIO
+	PWM0_IRQHandler,						// 55, 0xdc - PWM0
+	EEPROM_IRQHandler,						// 56, 0xe0 - EEPROM
+
 };
 
 //*****************************************************************************

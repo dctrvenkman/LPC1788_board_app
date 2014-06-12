@@ -112,7 +112,6 @@ STATIC const PINMUX_GRP_T pinmuxing[] = {
 	{4, 13, (IOCON_FUNC1 | IOCON_FASTSLEW_EN)}, /* A13 */
 	{4, 14, (IOCON_FUNC1 | IOCON_FASTSLEW_EN)}, /* A14 */
 
-#if 0
 	/* LCD */
 	{2, 0,  (IOCON_FUNC7 | IOCON_MODE_INACT)}, /* LCD_PWR */
 	{2, 1,  (IOCON_FUNC7 | IOCON_MODE_INACT)}, /* LCD_LE */
@@ -122,31 +121,30 @@ STATIC const PINMUX_GRP_T pinmuxing[] = {
 	{2, 5,  (IOCON_FUNC7 | IOCON_MODE_INACT)}, /* LCD_LP */
 	{0, 4,  (IOCON_FUNC7 | IOCON_MODE_INACT)}, /* R0 */
 	{0, 5,  (IOCON_FUNC7 | IOCON_MODE_INACT)}, /* R1 */
-	{2, 8,  ( | IOCON_MODE_INACT)}, /* R2 */
-	{2, 9,  ( | IOCON_MODE_INACT)}, /* R3 */
-	{2, 6,  ( | IOCON_MODE_INACT)}, /* R4 */
-	{2, 7,  ( | IOCON_MODE_INACT)}, /* R5 */
-	{1, 20, ( | IOCON_MODE_INACT)}, /* R6 */
-	{1, 21, ( | IOCON_MODE_INACT)}, /* R7 */
+	{2, 8,  (IOCON_FUNC7 | IOCON_MODE_INACT)}, /* R2 */
+	{2, 9,  (IOCON_FUNC7 | IOCON_MODE_INACT)}, /* R3 */
+	{2, 6,  (IOCON_FUNC7 | IOCON_MODE_INACT)}, /* R4 */
+	{2, 7,  (IOCON_FUNC7 | IOCON_MODE_INACT)}, /* R5 */
+	{1, 20, (IOCON_FUNC7 | IOCON_MODE_INACT)}, /* R6 */
+	{1, 21, (IOCON_FUNC7 | IOCON_MODE_INACT)}, /* R7 */
 	{0, 6,  (IOCON_FUNC7 | IOCON_MODE_INACT)}, /* G0 */
 	{0, 7,  (IOCON_FUNC7 | IOCON_MODE_INACT)}, /* G1 */
-	{4, 28, ( | IOCON_MODE_INACT)}, /* G2 */
-	{4, 29, ( | IOCON_MODE_INACT)}, /* G3 */
-	{1, 22, ( | IOCON_MODE_INACT)}, /* G4 */
-	{1, 23, ( | IOCON_MODE_INACT)}, /* G5 */
-	{1, 24, ( | IOCON_MODE_INACT)}, /* G6 */
-	{1, 25, ( | IOCON_MODE_INACT)}, /* G7 */
+	{4, 28, (IOCON_FUNC7 | IOCON_MODE_INACT)}, /* G2 */
+	{4, 29, (IOCON_FUNC7 | IOCON_MODE_INACT)}, /* G3 */
+	{1, 22, (IOCON_FUNC7 | IOCON_MODE_INACT)}, /* G4 */
+	{1, 23, (IOCON_FUNC7 | IOCON_MODE_INACT)}, /* G5 */
+	{1, 24, (IOCON_FUNC7 | IOCON_MODE_INACT)}, /* G6 */
+	{1, 25, (IOCON_FUNC7 | IOCON_MODE_INACT)}, /* G7 */
 	{0, 8,  (IOCON_FUNC7 | IOCON_MODE_INACT)}, /* B0 */
 	{0, 9,  (IOCON_FUNC7 | IOCON_MODE_INACT)}, /* B1 */
-	{2, 12, ( | IOCON_MODE_INACT)}, /* B2 */
-	{2, 13, ( | IOCON_MODE_INACT)}, /* B3 */
-	{1, 26, ( | IOCON_MODE_INACT)}, /* B4 */
-	{1, 27, ( | IOCON_MODE_INACT)}, /* B5 */
-	{1, 28, ( | IOCON_MODE_INACT)}, /* B6 */
-	{1, 29, ( | IOCON_MODE_INACT)}, /* B7 */
+	{2, 12, (IOCON_FUNC7 | IOCON_MODE_INACT)}, /* B2 */
+	{2, 13, (IOCON_FUNC7 | IOCON_MODE_INACT)}, /* B3 */
+	{1, 26, (IOCON_FUNC7 | IOCON_MODE_INACT)}, /* B4 */
+	{1, 27, (IOCON_FUNC7 | IOCON_MODE_INACT)}, /* B5 */
+	{1, 28, (IOCON_FUNC7 | IOCON_MODE_INACT)}, /* B6 */
+	{1, 29, (IOCON_FUNC7 | IOCON_MODE_INACT)}, /* B7 */
 
 	{1, 2,  (IOCON_FUNC0 | IOCON_MODE_INACT)}, /* LED_CTRL */
-#endif
 };
 
 /* EMC clock delay */
@@ -177,7 +175,7 @@ STATIC const IP_EMC_DYN_CONFIG_T AS4C8M16S_config = {
 			EMC_DYN_MODE_BURST_TYPE_SEQUENTIAL |
 			EMC_DYN_MODE_BURST_LEN_8,
 			EMC_DYN_CONFIG_DATA_BUS_16 |
-			EMC_DYN_CONFIG_16Mx16_4BANKS_13ROWS_9COLS | //EMC_DYN_CONFIG_8Mx16_4BANKS_12ROWS_9COLS |
+			EMC_DYN_CONFIG_8Mx16_4BANKS_12ROWS_9COLS |
 			EMC_DYN_CONFIG_MD_SDRAM
 		},
 		{0, 0, 0, 0},
@@ -226,11 +224,11 @@ void Board_SetupExtMemory(void)
 	/* Setup EMC Clock Divider for divide by 1 */
 	/* Setup EMC clock for a divider of 1 from CPU clock. Enable EMC clock for
 	   external memory setup of DRAM. */
-	Chip_Clock_SetEMCClockDiv(SYSCTL_EMC_DIV1);
+	Chip_Clock_SetEMCClockDiv(SYSCTL_EMC_DIV2);
 	Chip_SYSCTL_PeriphReset(SYSCTL_RESET_EMC);
 
-	/* Init EMC Controller -Enable-LE mode- clock ratio 1:1 */
-	Chip_EMC_Init(1, 0, 0);
+	/* Init EMC Controller (Enabled, clock ratio 1:1 (always 1:1 for 178x), 0=LE 1=BE mode) */
+	Chip_EMC_Init(1, 0, 1);
 
 	/* Init EMC Dynamic Controller */
 	Chip_EMC_Dynamic_Init((IP_EMC_DYN_CONFIG_T *) &AS4C8M16S_config);

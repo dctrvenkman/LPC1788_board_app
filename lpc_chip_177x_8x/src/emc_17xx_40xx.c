@@ -172,6 +172,9 @@ void initDynMem(LPC_EMC_T *pEMC, IP_EMC_DYN_CONFIG_T *Dynamic_Config, uint32_t E
 			uint32_t temp;
 			uint32_t ModeRegister;
 			ModeRegister = Dynamic_Config->DevConfig[ChipSelect].ModeRegister;
+			/* NOTE: Shit be broken. Hardcoded for now until NXP fixes the Col calc.
+			 * Refer to datasheet p183 and p199 */
+			Col_len = 12;
 			temp = *((volatile uint32_t *) (DynAddr | (ModeRegister << Col_len)));
 			temp = temp;
 		}

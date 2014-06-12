@@ -14,6 +14,15 @@
 #define CLI_TERM_CHARACTER      '\r'
 #define CLI_DEFAULT_PROMPT      '>'
 
+/* Used to clear warning about unused parameters */
+#define UNUSED(x) x=x
+
+#define PARAM_UINT(x) (*((unsigned int*)x))
+#define PARAM_SINT(x) (*((int*)x))
+#define PARAM_UCHAR(x) (*((unsigned char*)x))
+#define PARAM_SCHAR(x) (*((char*)x))
+#define PARAM_STRING(x) (*((char**)x))
+
 typedef enum
 {
     CLI_RETURN_SUCCESS,
@@ -31,14 +40,14 @@ typedef enum
 typedef enum
 {
     NONE, /* DEBUG */
-    CLI_PARAM_TYPE_UCHAR,
-    CLI_PARAM_TYPE_SCHAR,
+    CLI_PARAM_TYPE_CHAR,
     CLI_PARAM_TYPE_UINT,
     CLI_PARAM_TYPE_SINT,
     CLI_PARAM_TYPE_ULONG,
     CLI_PARAM_TYPE_SLONG,
     CLI_PARAM_TYPE_FLOAT,
     CLI_PARAM_TYPE_POINTER,
+    CLI_PARAM_TYPE_STRING,
     CLI_PARAM_TYPE_QTY
 }cliParamType_t;
 

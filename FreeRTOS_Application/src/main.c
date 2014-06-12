@@ -113,19 +113,93 @@ static void testTask2(void *pvParameters)
 	}
 }
 
+void LCD_IRQHandler(void)
+{
+	int ints = LPC_LCD->INTSTAT;
+	LPC_LCD->INTCLR = 0x1E;
+}
+
 int main(void)
 {
+	/* Disable watchdog */
+	LPC_WWDT->MOD = 0;
+
+	Chip_LCD_DeInit(LPC_LCD);
+
+	{
+		int i, j;
+		int* addr = (int*)0xa0000000;
+		for(i = 0; i < 272; i++)
+		{
+			for(j = 0; j < 480; j++)
+			{
+#if 0
+				if(j < 120)
+					*addr = 0x000ff000;
+				else if(j < 240)
+					*addr = 0x0ffffff0;
+				else if(j < 360)
+					*addr = 0x0ff00000;
+				else
+					*addr = 0x00000ff0;
+#elif 0
+				if(j < 60)
+					*addr = 0x0ffffff0;
+				else if(j < 120)
+					*addr = 0x000ffff0;
+				else if(j < 180)
+					*addr = 0x0ffff000;
+				else if(j < 240)
+					*addr = 0x000ff000;
+				else if(j < 300)
+					*addr = 0x0ff00ff0;
+				else if(j < 360)
+					*addr = 0x00000ff0;
+				else if(j < 420)
+					*addr = 0x0ff00000;
+				else
+					*addr = 0x00000000;
+#elif 0
+				if(j < 60)
+					*addr = 0x000000ff;
+				else if(j < 120)
+					*addr = 0x0000ff00;
+				else if(j < 180)
+					*addr = 0x0000ffff;
+				else if(j < 240)
+					*addr = 0x00ff0000;
+				else if(j < 300)
+					*addr = 0x00ff00ff;
+				else if(j < 360)
+					*addr = 0x00ffff00;
+				else if(j < 420)
+					*addr = 0x00ffffff;
+				else
+					*addr = 0x00000000;
+#endif
+				addr++;
+			}
+		}
+	}
+
+	/* Set LCD DMA to highest priority */
+	LPC_SYSCON->MATRIXARB |= (3 << 10);
+	Chip_LCD_Init(LPC_LCD, &NHD_43_480x272);
+	//LPC_LCD->CTRL |= 1 << 9; //BEBO - big endian
+	Chip_LCD_SetUPFrameBuffer(LPC_LCD, (void*)FRAMEBUFFER_ADDR);
+	Chip_LCD_SetLPFrameBuffer(LPC_LCD, (void*)FRAMEBUFFER_ADDR);
+	Chip_LCD_EnableInts(LPC_LCD, 0x12);
+	NVIC_EnableIRQ(LCD_IRQn);
+	Chip_LCD_PowerOn(LPC_LCD);
+
 	/* Configure the hardware. */
 	prvSetupHardware();
 
 	CLITaskInit();
+	registerMiscCmds();
+
     xTaskCreate(testTask1, "test1", configMINIMAL_STACK_SIZE * 10, (void *) NULL, tskIDLE_PRIORITY + 1, NULL);
     xTaskCreate(testTask2, "test2", configMINIMAL_STACK_SIZE, (void *) NULL, tskIDLE_PRIORITY + 1, NULL);
-
-    //LCDdriver_initialisation();
-    //LCD_PrintString(5, 10, "FreeRTOS.org", 14, COLOR_GREEN);
-
-    registerMiscCmds();
 
     /* Start the scheduler. */
 	vTaskStartScheduler();

@@ -59,7 +59,8 @@ extern "C" {
 /* Board name */
 #define BOARD_LPC1788
 
-#define FRAMEBUFFER_ADDR        EMC_ADDRESS_DYCS0	/*!< Frame buffer address for LCD */
+#define SDRAM_SIZE (16 * 1024 * 1024) /* 16MB SDRAM */
+#define FRAMEBUFFER_ADDR EMC_ADDRESS_DYCS0	/*!< Frame buffer address for LCD */
 
 /**
  * LCD configuration data

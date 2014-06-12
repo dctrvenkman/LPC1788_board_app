@@ -15,10 +15,11 @@
 /**
  * LCD configuration data
  */
+#if 1
 const LCD_CONFIG_T NHD_43_480x272 = {
-	2,		/* Horizontal back porch in clocks */
-	2,		/* Horizontal front porch in clocks */
-	41,		/* HSYNC pulse width in clocks */
+	10,		/* Horizontal back porch in clocks */
+	10,		/* Horizontal front porch in clocks */
+	25,		/* HSYNC pulse width in clocks */
 	480,	/* Pixels per line */
 	2,		/* Vertical back porch in clocks */
 	2,		/* Vertical front porch in clocks */
@@ -29,11 +30,32 @@ const LCD_CONFIG_T NHD_43_480x272 = {
 	1,		/* Invert HSYNC, 1 = invert */
 	1,		/* Invert VSYNC, 1 = invert */
 	1,		/* AC bias frequency in clocks (not used) */
-	6,		/* Maximum bits per pixel the display supports */
+	5,		/* Maximum bits per pixel the display supports */
 	LCD_TFT,				/* LCD panel type */
 	LCD_COLOR_FORMAT_RGB,	/* BGR or RGB */
 	0		/* Dual panel, 1 = dual panel display */
 };
+#else
+const LCD_CONFIG_T NHD_43_480x272 = {
+	41,		/* Horizontal back porch in clocks */
+	2,		/* Horizontal front porch in clocks */
+	2,		/* HSYNC pulse width in clocks */
+	480,	/* Pixels per line */
+	10,		/* Vertical back porch in clocks */
+	2,		/* Vertical front porch in clocks */
+	2,		/* VSYNC pulse width in clocks */
+	272,	/* Lines per panel */
+	0,		/* Invert output enable, 1 = invert */
+	1,		/* Invert panel clock, 1 = invert */
+	1,		/* Invert HSYNC, 1 = invert */
+	1,		/* Invert VSYNC, 1 = invert */
+	1,		/* AC bias frequency in clocks (not used) */
+	5,		/* Maximum bits per pixel the display supports */
+	LCD_TFT,				/* LCD panel type */
+	LCD_COLOR_FORMAT_RGB,	/* BGR or RGB */
+	0		/* Dual panel, 1 = dual panel display */
+};
+#endif
 
 /*****************************************************************************
  * Public types/enumerations/variables
@@ -124,68 +146,6 @@ void Board_Init(void)
 }
 
 #if 0
-/* Initialize LCD Interface */
-void Board_LCD_Init(void)
-{
-	uint8_t i;
-
-	for (i = 4; i <= 9; i++) {
-		Chip_IOCON_PinMuxSet(LPC_IOCON, 0, i, (IOCON_FUNC7 | IOCON_MODE_INACT));
-	}
-	for (i = 20; i <= 29; i++) {
-		Chip_IOCON_PinMuxSet(LPC_IOCON, 1, i, (IOCON_FUNC7 | IOCON_MODE_INACT));
-	}
-	for (i = 0; i <= 6; i++) {
-		Chip_IOCON_PinMuxSet(LPC_IOCON, 2, i, (IOCON_FUNC7 | IOCON_MODE_INACT));
-	}
-	Chip_IOCON_PinMuxSet(LPC_IOCON, 2, 7, (IOCON_FUNC7 | IOCON_MODE_INACT));
-	Chip_IOCON_PinMuxSet(LPC_IOCON, 2, 8, (IOCON_FUNC7 | IOCON_MODE_INACT));
-	Chip_IOCON_PinMuxSet(LPC_IOCON, 2, 9, (IOCON_FUNC7 | IOCON_MODE_INACT));
-
-	for (i = 11; i <= 13; i++) {
-		Chip_IOCON_PinMuxSet(LPC_IOCON, 2, i, (IOCON_FUNC7 | IOCON_MODE_INACT));
-	}
-	Chip_IOCON_PinMuxSet(LPC_IOCON, 4, 28, (IOCON_FUNC7 | IOCON_MODE_INACT));
-	Chip_IOCON_PinMuxSet(LPC_IOCON, 4, 29, (IOCON_FUNC7 | IOCON_MODE_INACT));
-	Chip_IOCON_PinMuxSet(LPC_IOCON, LCD_BACKLIGHT_PORTNUM, LCD_BACKLIGHT_PINNUM, (IOCON_FUNC0 | IOCON_MODE_INACT));
-	Chip_GPIO_WriteDirBit(LPC_GPIO, LCD_BACKLIGHT_PORTNUM, LCD_BACKLIGHT_PINNUM, true);
-
-	Board_InitLCDController();
-}
-
-/* Initialize the LCD controller on the external QVGA (320x240) TFT LCD*/
-void Board_InitLCDController(void)
-{
-	/* SSP pin configuration */
-	Chip_IOCON_PinMuxSet(LPC_IOCON, 0, 15, (IOCON_FUNC2 | IOCON_MODE_INACT));
-	Chip_IOCON_PinMuxSet(LPC_IOCON, 0, 16, (IOCON_FUNC2 | IOCON_MODE_INACT));
-	Chip_IOCON_PinMuxSet(LPC_IOCON, 0, 17, (IOCON_FUNC2 | IOCON_MODE_INACT));
-	Chip_IOCON_PinMuxSet(LPC_IOCON, 0, 18, (IOCON_FUNC2 | IOCON_MODE_INACT));
-	/*  DC pin */
-	Chip_IOCON_PinMuxSet(LPC_IOCON, TSC2046_DC_PORTNUM, TSC2046_DC_PINNUM, (IOCON_FUNC0 | IOCON_MODE_INACT));
-	Chip_GPIO_WriteDirBit(LPC_GPIO, TSC2046_DC_PORTNUM, TSC2046_DC_PINNUM, true);
-
-	Chip_SSP_Init(LCD_SSP_CTRL);
-	Chip_SSP_SetMaster(LCD_SSP_CTRL, true);
-	Chip_SSP_SetBitRate(LCD_SSP_CTRL, 1000000);
-	Chip_SSP_SetFormat(LCD_SSP_CTRL, SSP_BITS_8, SSP_FRAMEFORMAT_SPI, SSP_CLOCK_MODE0);
-	
-	Chip_SSP_Enable(LCD_SSP_CTRL);
-
-	delayMs(200);
-	/* initialize LCD controller */
-	initSSD1289();
-
-	/* Power of SSP inteface */
-	Chip_SSP_Disable(LCD_SSP_CTRL);
-	Chip_SSP_DeInit(LCD_SSP_CTRL);
-
-	Chip_IOCON_PinMuxSet(LPC_IOCON, 0, 15, (IOCON_FUNC0 | IOCON_MODE_INACT));
-	Chip_IOCON_PinMuxSet(LPC_IOCON, 0, 16, (IOCON_FUNC0 | IOCON_MODE_INACT));
-	Chip_IOCON_PinMuxSet(LPC_IOCON, 0, 17, (IOCON_FUNC0 | IOCON_MODE_INACT));
-	Chip_IOCON_PinMuxSet(LPC_IOCON, 0, 18, (IOCON_FUNC0 | IOCON_MODE_INACT));
-}
-
 /* Initialize touchscreen controller */
 void Board_InitTouchController(void)
 {
